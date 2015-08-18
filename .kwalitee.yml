@@ -1,0 +1,6 @@
+components:
+- docker
+- docs
+- global
+- tests
+- travis
