@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+    <h1>
+        Oops!</h1>
+    <h2>
+        404 Not Found</h2>
+    <div class="error-details">
+        Requested page not found!
+    </div>
+    <div class="error-actions">
+        <a href="{{ url_for('claims_views.index') }}">
+          <span class="glyphicon glyphicon-home"></span>
+          Take Me Home
+        </a>
+        <a href="{{ url_for('claims_views.contact') }}">
+          <span class="glyphicon glyphicon-envelope"></span> Contact Support
+        </a>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,94 @@
+/*
+ * Globals
+ */
+
+a,
+a:focus,
+a:hover {
+  color: #333;
+}
+
+/*
+ * Base structure
+ */
+
+html,
+body {
+  background-color: #fff;
+  color: #333;
+}
+
+/*
+ * Header
+ */
+
+ .custom-nav > li > a {
+  color: #333;
+}
+.custom-nav > li > a:hover,
+.custom-nav > li > a:focus {
+  background-color: transparent;
+  border-bottom-color: #090909;
+}
+.custom-nav > .active > a,
+.custom-nav > .active > a:hover,
+.custom-nav > .active > a:focus {
+  color: #333;
+  border-bottom-color: #333;
+}
+
+/*
+ * Sidebar
+ */
+
+ .sidebar-nav {
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #999;
+  border-radius: 5px;
+ }
+
+ .sidebar-nav > .nav-header {
+  color: #333;
+  font-weight: bold;
+ }
+
+ .sidebar-nav > li > a {
+  padding: 5px 15px;
+  color: #333;
+}
+
+.sidebar-nav > li > a:hover,
+.sidebar-nav > li > a:focus {
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+/*
+ * Footer
+ */
+
+.footer {
+  color: #333;
+}
+
+/*
+ * Documentation
+ */
+
+.doc-container {
+  text-align: left;
+  padding-top: 100px;
+}
+
+.doc-content a {
+  color: #2A5DB0;
+}
+
+.doc-title-1 {
+  border-bottom: 1px solid #fff;
+}
+
+.curl {
+  width: 600px;
+}

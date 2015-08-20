@@ -1,0 +1,20 @@
+{
+  "claimant": "CDS",
+  "subject": {
+    "type": "CDS_RECORD_ID",
+    "value": "2001192"
+  },
+  "claim": {
+    "predicate": "is_same_as",
+    "datetime": "2015-05-25 11:00:00 UTC",
+    "certainty": 100,
+    "arguments": {
+      "human": "False",
+      "actor": "CDS_submission"
+    }
+  },
+  "object": {
+    "type": "CDS_REPORT_NUMBER",
+    "value": "CMS-PAS-HIG-14-008"
+  }
+}

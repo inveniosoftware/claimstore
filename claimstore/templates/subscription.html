@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <div id="submission_form_holder"></div>
+  <button id="submit" class="btn btn-success" type="submit">Subscribe</button>
+
+{% endblock %}
+
+{% block scripts %}
+
+  {{ super() }}
+
+  <script src="{{ url_for('static', filename='js/lib/jsoneditor.js') }}"></script>
+
+  <script>
+
+    var editor = new JSONEditor($('#submission_form_holder').get(0), {
+        schema: {{ json_schema|safe }},
+        theme: 'bootstrap3',
+        iconlib: 'bootstrap3',
+        disable_edit_json: true,
+        disable_properties: true,
+        disable_collapse: true,
+        disable_array_reorder: true
+      });
+
+    $('#submit').on('click', function() {
+      var errors = editor.validate();
+
+      if(!errors.length) {
+        $.ajax({
+          type: 'POST',
+          url: '{{ url_for("claims_restful.subscribe") }}',
+          data: JSON.stringify(editor.getValue()),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function(data) {
+            alert('Submission successful!');
+          },
+          error: function(errMsg) {
+            alert(errMsg.responseJSON.message);
+          }
+        });
+      } else {
+        alert('All fields are mandatory. Please, fill them all.');
+      }
+    });
+
+  </script>
+
+{% endblock %}

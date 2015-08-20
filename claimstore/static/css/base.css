@@ -1,0 +1,150 @@
+/*
+ * Globals
+ */
+
+a,
+a:focus,
+a:hover {
+  color: #fff;
+}
+
+/*
+ * Base structure
+ */
+
+html,
+body {
+  height: 100%;
+  background-color: #333;
+}
+body {
+  color: #fff;
+  text-align: center;
+}
+
+/*
+ * Header
+ */
+.custom-navbar-header > h3 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.custom-navbar {
+  display: table-row;
+}
+
+.custom-nav {
+  text-align: center;
+}
+.custom-nav > li {
+  display: inline-block;
+}
+.custom-nav > li + li {
+  margin-left: 20px;
+}
+.custom-nav > li > a {
+  padding-right: 0;
+  padding-left: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff; /* IE8 proofing */
+  color: rgba(255,255,255,.75);
+  border-bottom: 2px solid transparent;
+}
+.custom-nav > li > a:hover,
+.custom-nav > li > a:focus {
+  background-color: transparent;
+  border-bottom-color: #a9a9a9;
+  border-bottom-color: rgba(255,255,255,.25);
+}
+.custom-nav > .active > a,
+.custom-nav > .active > a:hover,
+.custom-nav > .active > a:focus {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+@media (min-width: 768px) {
+  .custom-nav {
+    text-align: right;
+  }
+}
+
+/*
+ * Container
+ */
+
+.outer-container {
+  display: table;
+  height: 100%;
+}
+
+.main-content-wrap {
+  height: 100%;
+  display: table-row;
+}
+
+.main-content {
+  display: table-cell;
+  vertical-align: middle;
+  overflow: auto;
+  padding-bottom:100px;
+  margin-bottom: 100px;
+}
+
+/*
+ * Footer
+ */
+
+.footer {
+  display: table-row;
+  height: 50px;
+  clear:both;
+  padding-top:20px;
+  color: #999; /* IE8 proofing */
+  color: rgba(255,255,255,.5);
+}
+
+.footer > .container {
+  display: table-cell;
+}
+
+
+/*
+ * Affix and center
+ */
+
+@media (min-width: 1024px) {
+  .container {
+    width: 1024px;
+  }
+}
+
+/*
+ * Subscription form
+ */
+
+#submission_form_holder {
+  color: #777;
+  text-align: left;
+  max-width: 700px;
+  display: table;
+  margin: 0 auto;
+}
+
+/*
+ * Errors
+ */
+
+.error-details {
+  padding: 20px 0;
+}
+
+.error-actions {
+  padding: 10px 0;
+}
+
+.error-actions > a {
+  padding: 0 10px;
+}

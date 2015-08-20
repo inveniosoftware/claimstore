@@ -1,0 +1,27 @@
+{
+  "name": "CDS",
+  "url": "http://cds.cern.ch",
+  "persistent_identifiers": [
+    {
+      "type": "CDS_RECORD_ID",
+      "description": "CDS record",
+      "url": "http://cds.cern.ch/record/<CDS_RECORD_ID>",
+      "example_value": "123",
+      "example_url": "http://cds.cern.ch/record/123"
+    },
+    {
+      "type": "CDS_REPORT_NUMBER",
+      "description": "CDS report number",
+      "url": "http://cds.cern.ch/report/<CDS_REPORT_NUMBER>",
+      "example_value": "CMS-PAS-HIG-14-008",
+      "example_url": "http://cds.cern.ch/report/CMS-PAS-HIG-14-008"
+    },
+    {
+      "type": "CDS_AUTHOR_ID",
+      "description": "CDS author",
+      "url": "http://cds.cern.ch/author/<CDS_AUTHOR_ID>",
+      "example_value": "J.R. Ellis.1",
+      "example_url": "http://cds.cern.ch/author/J.R.Ellis.1"
+    }
+  ]
+}

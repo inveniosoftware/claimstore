@@ -1,0 +1,21 @@
+{
+  "claimant": "INSPIRE",
+  "subject": {
+    "type": "ARXIV_ID",
+    "value": "cond-mat/9906097"
+  },
+  "claim": {
+    "predicate": "is_same_as",
+    "datetime": "2015-05-25 11:00:00 UTC",
+    "certainty": 80,
+    "arguments": {
+      "human": "True",
+      "actor": "John Doe",
+      "role": "cataloger"
+    }
+  },
+  "object": {
+    "type": "DOI",
+    "value": "C10.1103/PhysRevE.62.7422"
+  }
+}
