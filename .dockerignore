@@ -1,0 +1,11 @@
+.git
+*.gitignore
+
+*.pyc
+*.swp
+*.swo
+*.~
+
+.dockerignore
+Dockerfile
+docker-compose.yml
