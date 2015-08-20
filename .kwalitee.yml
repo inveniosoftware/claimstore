@@ -2,5 +2,6 @@ components:
 - docker
 - docs
 - global
+- installation
 - tests
 - travis

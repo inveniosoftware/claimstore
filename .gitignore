@@ -7,9 +7,6 @@
 *.pyo
 __pycache__/
 
-# local configuration
-config.py
-
 #sublime configuration files
 *.sublime-project
 *.sublime-workspace
