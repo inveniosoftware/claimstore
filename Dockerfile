@@ -21,25 +21,26 @@
 # Use Python-3.4:
 FROM python:3.4
 
-# Install some prerequisites ahead of `requirements.txt` in order to
-# profit from the docker build cache:
+# Install some prerequisites ahead of `setup.py` in order to profit
+# from the docker build cache:
 RUN pip install flask \
                 flask-sqlalchemy \
                 jsonschema \
-                pep257 \
                 psycopg2 \
                 pytest \
+                pytest-cache \
                 pytest-cov \
+                pytest-isort \
                 pytest-pep8 \
+                pytest-pep257 \
                 sphinx
-
-# Install all prerequisites:
-ADD requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
 
 # Add sources to `code` and work there:
 WORKDIR /code
 ADD . /code
+
+# Install ClaimStore:
+RUN pip install -e .
 
 # Run container as user `claimstore` with UID `1000`, which should match
 # current host user in most situations:

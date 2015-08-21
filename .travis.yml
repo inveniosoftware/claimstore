@@ -26,7 +26,7 @@ notifications:
 language: python
 
 python:
-  - "2.7"
+  - "3.4"
 
 cache:
   - pip
@@ -44,5 +44,19 @@ before_install:
        fi
   - echo ${TRAVIS_COMMIT_RANGE}
 
-script:
+install:
+  - travis_retry pip install --upgrade pip
+  - travis_retry pip install coveralls
+  - travis_retry pip install pytest pytest-pep8 pytest-pep257 pytest-cov pytest-cache pytest-isort
+  - travis_retry pip install -e .
+
+before_script:
+  - travis_retry pip install kwalitee GitPython --pre  # needs recent pep257
   - kwalitee check message -s ${TRAVIS_COMMIT_RANGE}
+  - travis_retry pip install pytest-pep257  # needs older pep257
+
+script:
+  - python setup.py test
+
+after_success:
+  - coveralls

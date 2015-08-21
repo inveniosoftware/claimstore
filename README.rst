@@ -5,6 +5,9 @@
 .. image:: https://travis-ci.org/inveniosoftware/claimstore.svg?branch=master
    :target: https://travis-ci.org/inveniosoftware/claimstore
 
+.. image:: https://coveralls.io/repos/inveniosoftware/claimstore/badge.svg?branch=master
+   :target: https://coveralls.io/r/inveniosoftware/claimstore
+
 .. image:: https://img.shields.io/badge/licence-GPL_2-green.svg?style=flat
    :target: https://raw.githubusercontent.com/inveniosoftware/claimstore/master/LICENSE
 
