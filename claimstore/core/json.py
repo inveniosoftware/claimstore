@@ -18,6 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+"""Useful JSON-related methods."""
+
 import os
 import json
 import jsonschema
@@ -27,10 +29,10 @@ from flask import current_app
 def get_json_schema(schema):
     """Return a given json schema.
 
-    The argument schema should have the format module.schema_name
-    (e.g. claims.claimants)
+    :param schema: schema to be fetched. It must be a string with the format:
+                   module.schema_name (e.g. claims.claimants).
+    :return: a str with the requested json schema.
     """
-
     module_name, schema_name = schema.split(".")
     schema_file_path = os.path.join(
         current_app.config['BASE_DIR'],
@@ -47,8 +49,13 @@ def get_json_schema(schema):
 
 
 def validate_json(json_input, schema):
-    """Validate JSON against a given schema."""
+    """Validate JSON against a given schema.
 
+    :param json_input: a dict with the full json to be validated.
+    :param schema: JSON schema to use in the validation. It must be a string
+                   with the format module.schema_name (e.g. claims.claimants).
+    :return: True if json_input follows the schema. False otherwise.
+    """
     if schema:
         schema_content = get_json_schema(schema)
         jsonschema.validate(json_input, json.loads(schema_content))

@@ -18,11 +18,21 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+"""Definition of specific exceptions."""
+
 
 class InvalidUsage(Exception):
+
+    """Invalid request.
+
+    Used to identify that a request is not correct (e.g. it does not follow the
+    proper JSON schema).
+    """
+
     status_code = 400
 
     def __init__(self, message, status_code=None, payload=None, details=None):
+        """Initialise the exception."""
         Exception.__init__(self)
         self.message = message
         if status_code is not None:
@@ -30,6 +40,7 @@ class InvalidUsage(Exception):
         self.payload = payload
 
     def to_dict(self):
+        """Return exception as a dictionary."""
         rv = dict(self.payload or ())
         rv['status'] = 'error'
         rv['message'] = self.message

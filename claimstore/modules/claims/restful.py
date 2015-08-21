@@ -18,6 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+"""Restful resources for the claims module."""
+
 from flask import Blueprint, request, jsonify
 from claimstore.modules.claims.models import Claim, Claimant, IdentifierType, \
     Predicate
@@ -36,6 +38,11 @@ claims_restful = Blueprint(
 @claims_restful.route('/subscribe', methods=['POST'])
 @only_json
 def subscribe():
+    """Register a new claimant in the database.
+
+    This POST service expects JSON data following the JSON schema defined for
+    claimants.
+    """
     json_data = request.get_json()
 
     try:
@@ -75,6 +82,11 @@ def subscribe():
 @claims_restful.route('/claims', methods=['POST'])
 @only_json
 def submit_claim():
+    """Record a new claim.
+
+    This POST service expects JSON data following the JSON schema defined for
+    claims.
+    """
     json_data = request.get_json()
 
     try:
@@ -136,6 +148,7 @@ def submit_claim():
 
 @claims_restful.route('/claims', methods=['GET'])
 def get_claim():
+    """GET service that returns the stored claims."""
     return jsonify(
         json_list=[
             {'created': c.created,

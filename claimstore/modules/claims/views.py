@@ -18,6 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+"""ClaimStore views."""
+
 from flask import render_template, Blueprint
 from claimstore.core.json import get_json_schema
 
@@ -30,11 +32,13 @@ claims_views = Blueprint(
 
 @claims_views.route('/', methods=['GET'])
 def index():
+    """Render the home page for ClaimStore."""
     return render_template('cover.html', active_menu='home')
 
 
 @claims_views.route('/subscription', methods=['GET'])
 def subscription():
+    """Render the subscription form page."""
     return render_template(
         "subscription.html",
         json_schema=get_json_schema('claims.claimant')
@@ -43,9 +47,11 @@ def subscription():
 
 @claims_views.route('/api', methods=['GET'])
 def api():
+    """Render the api documenation page."""
     return render_template("api.html", active_menu='api')
 
 
 @claims_views.route('/contact', methods=['GET'])
 def contact():
+    """Render the contact page."""
     return render_template("contact.html", active_menu='contact')

@@ -18,11 +18,14 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+"""Useful decorators."""
+
 from functools import wraps
 from flask import jsonify, request
 
 
 def only_json(f):
+    """Fail if the request header Content-Type is not application/json."""
     @wraps(f)
     def wrapper(*args, **kwds):
         if 'application/json' in request.headers['Content-Type']:

@@ -18,12 +18,17 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+"""ClaimStore data model."""
+
 from uuid import uuid4
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from claimstore.app import db
 
 
 class Claim(db.Model):
+
+    """Represents a Claim."""
+
     uid = db.Column(
         db.Integer,
         primary_key=True
@@ -77,10 +82,14 @@ class Claim(db.Model):
     claim_details = db.Column(JSONB)
 
     def __repr__(self):
+        """Printable version of the Claim object."""
         return '<Claim {}>'.format(self.uuid)
 
 
 class Claimant(db.Model):
+
+    """Represents a Claimant."""
+
     uid = db.Column(
         db.Integer,
         primary_key=True,
@@ -104,10 +113,14 @@ class Claimant(db.Model):
     url = db.Column(db.String)
 
     def __repr__(self):
+        """Printable version of the Claimant object."""
         return '<Claimant {}>'.format(self.uuid)
 
 
 class IdentifierType(db.Model):
+
+    """Represents an identifier type."""
+
     uid = db.Column(db.Integer, primary_key=True)
     name = db.Column(
         db.String,
@@ -137,10 +150,18 @@ class IdentifierType(db.Model):
     )
 
     def __repr__(self):
+        """Printable version of the IdentifierType object."""
         return '<IdentifierType {}>'.format(self.name)
 
 
 class Predicate(db.Model):
+
+    """Represents a predicate.
+
+    The predicate defines the type of claim. An example of predicate could be:
+    is_same_as.
+    """
+
     uid = db.Column(db.Integer, primary_key=True)
     name = db.Column(
         db.String,
@@ -150,4 +171,5 @@ class Predicate(db.Model):
     )
 
     def __repr__(self):
+        """Printable version of the Predicate object."""
         return '<Predicate {}'.format(self.name)

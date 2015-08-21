@@ -18,11 +18,14 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+"""Basic run module."""
+
 import argparse
 from claimstore.app import create_app
 
 
 def main():
+    """Create app and run server."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--initdb",

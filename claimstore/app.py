@@ -18,6 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+"""Flask app creation."""
+
 from flask import Flask, render_template, jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
 from claimstore.core.exception import InvalidUsage
@@ -28,12 +30,14 @@ db = SQLAlchemy()
 
 
 def handle_invalid_usage(error):
+    """Handle invalid usage exception."""
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
 
 
 def create_app(db_create_all=False):
+    """Create flask app."""
     app = Flask(__name__)
 
     # Configurations
