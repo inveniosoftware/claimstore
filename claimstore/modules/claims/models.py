@@ -25,6 +25,8 @@ from uuid import uuid4
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 from claimstore.app import db
+from claimstore.core.datetime import now_utc
+from claimstore.core.db.types import UTCDateTime
 
 
 class Claim(db.Model):
@@ -42,9 +44,8 @@ class Claim(db.Model):
         default=lambda: str(uuid4())
     )
     created = db.Column(
-        db.DateTime,
-        nullable=False,
-        default=db.func.current_timestamp()
+        UTCDateTime,
+        nullable=False
     )
     claimant_id = db.Column(
         db.Integer,
@@ -103,8 +104,8 @@ class Claimant(db.Model):
         default=lambda: str(uuid4()),
     )
     joined = db.Column(
-        db.DateTime,
-        default=db.func.current_timestamp(),
+        UTCDateTime,
+        default=now_utc(),
     )
     name = db.Column(
         db.String,

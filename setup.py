@@ -93,8 +93,10 @@ setup(
     install_requires=[
         'flask',
         'flask-sqlalchemy',
-        'psycopg2',
+        'isodate',
         'jsonschema',
+        'psycopg2',
+        'pytz',
     ],
     extras_require={
         'development': ['Flask-DebugToolbar'],

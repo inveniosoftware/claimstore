@@ -20,6 +20,7 @@
 
 """Restful resources for the claims module."""
 
+import isodate
 from flask import Blueprint, jsonify, request
 
 from claimstore.app import db
@@ -94,6 +95,15 @@ def submit_claim():
     except Exception as e:
         raise InvalidUsage('JSON data is not valid', details=str(e))
 
+    # Check if claim.datetime is ISO 8601
+    try:
+        created_dt = isodate.parse_datetime(json_data['claim']['datetime'])
+    except isodate.ISO8601Error as e:
+        raise InvalidUsage(
+            'Claim datetime does not follow ISO 8601 Z',
+            details=str(e)
+        )
+
     claimant = Claimant.query.filter_by(name=json_data['claimant']).first()
     if not claimant:
         return jsonify({'status': 'error',
@@ -129,6 +139,7 @@ def submit_claim():
 
     arguments = json_data['claim'].get('arguments', {})
     new_claim = Claim(
+        created=created_dt,
         claimant_id=claimant.uid,
         subject_type_id=subject_type.uid,
         subject_value=json_data['subject']['value'],
@@ -151,7 +162,7 @@ def get_claim():
     """GET service that returns the stored claims."""
     return jsonify(
         json_list=[
-            {'created': c.created,
+            {'created': c.created.isoformat(),
              'claim_details': c.claim_details} for c in Claim.query.all()
         ]
     )

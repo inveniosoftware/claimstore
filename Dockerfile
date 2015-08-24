@@ -25,6 +25,7 @@ FROM python:3.4
 # from the docker build cache:
 RUN pip install flask \
                 flask-sqlalchemy \
+                isodate \
                 jsonschema \
                 psycopg2 \
                 pytest \
@@ -33,6 +34,7 @@ RUN pip install flask \
                 pytest-isort \
                 pytest-pep8 \
                 pytest-pep257 \
+                pytz \
                 sphinx
 
 # Add sources to `code` and work there:

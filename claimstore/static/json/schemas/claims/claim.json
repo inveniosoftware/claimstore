@@ -35,7 +35,8 @@
         },
         "datetime": {
           "description": "#TODO: which date time is this?",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "certainty": {
           "description": "certainty of the claim",
