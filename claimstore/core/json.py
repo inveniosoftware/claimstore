@@ -23,9 +23,8 @@
 import json
 import os
 
+import jsonschema  # noqa (pytest-isort is happy, flake8 not here)
 from flask import current_app
-
-import jsonschema
 
 
 def get_json_schema(schema):

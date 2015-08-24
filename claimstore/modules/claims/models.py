@@ -22,9 +22,9 @@
 
 from uuid import uuid4
 
-from claimstore.app import db
-
 from sqlalchemy.dialects.postgresql import JSONB, UUID
+
+from claimstore.app import db
 
 
 class Claim(db.Model):

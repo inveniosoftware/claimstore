@@ -20,15 +20,14 @@
 
 """Restful resources for the claims module."""
 
+from flask import Blueprint, jsonify, request
+
 from claimstore.app import db
 from claimstore.core.decorators import only_json
 from claimstore.core.exception import InvalidUsage
 from claimstore.core.json import validate_json
 from claimstore.modules.claims.models import Claim, Claimant, IdentifierType, \
     Predicate
-
-from flask import Blueprint, jsonify, request
-
 
 claims_restful = Blueprint(
     'claims_restful',
