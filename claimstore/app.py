@@ -20,9 +20,10 @@
 
 """Flask app creation."""
 
-from flask import Flask, render_template, jsonify
-from flask.ext.sqlalchemy import SQLAlchemy
 from claimstore.core.exception import InvalidUsage
+
+from flask import Flask, jsonify, render_template
+from flask.ext.sqlalchemy import SQLAlchemy
 
 # Define the database object which is imported
 # by modules and controllers

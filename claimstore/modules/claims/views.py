@@ -20,8 +20,9 @@
 
 """ClaimStore views."""
 
-from flask import render_template, Blueprint
 from claimstore.core.json import get_json_schema
+
+from flask import Blueprint, render_template
 
 
 claims_views = Blueprint(

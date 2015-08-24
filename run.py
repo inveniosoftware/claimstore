@@ -21,6 +21,7 @@
 """Basic run module."""
 
 import argparse
+
 from claimstore.app import create_app
 
 

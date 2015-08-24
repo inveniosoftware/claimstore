@@ -21,8 +21,10 @@
 """ClaimStore data model."""
 
 from uuid import uuid4
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+
 from claimstore.app import db
+
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 
 class Claim(db.Model):

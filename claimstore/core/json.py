@@ -20,10 +20,12 @@
 
 """Useful JSON-related methods."""
 
-import os
 import json
-import jsonschema
+import os
+
 from flask import current_app
+
+import jsonschema
 
 
 def get_json_schema(schema):
