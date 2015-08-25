@@ -35,7 +35,8 @@ RUN pip install flask \
                 pytest-pep8 \
                 pytest-pep257 \
                 pytz \
-                sphinx
+                sphinx \
+                webtest
 
 # Add sources to `code` and work there:
 WORKDIR /code

@@ -75,6 +75,7 @@ tests_require = [
     'pytest-pep257',
     'pytest',
     'coverage',
+    'webtest',
 ]
 
 setup(

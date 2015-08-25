@@ -28,6 +28,12 @@ language: python
 python:
   - "3.4"
 
+addons:
+  postgresql: "9.4"
+
+env:
+  - SQLALCHEMY_DATABASE_URI=postgres://postgres@localhost:5432/postgres
+
 cache:
   - pip
 

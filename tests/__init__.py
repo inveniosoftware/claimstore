@@ -18,24 +18,4 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""claimstore.core.json test suite."""
-
-from claimstore.core.json import get_json_schema
-
-from .base import ClaimStoreTestCase
-
-
-class FlaskTestCase(ClaimStoreTestCase):
-
-    """Testing claimstore.core.json."""
-
-    def test_get_json_schema(self):
-        """Testing `get_json_schema()`."""
-        with self.app.app_context():
-            assert '"title": "Service Name",' in \
-                get_json_schema('claims.claimant')
-            assert 'URL showing the identifier placeholder' in \
-                get_json_schema('claims.claimant')
-            assert '"required": ["type", "description", "url", ' + \
-                '"example_value", "example_url"],' in \
-                get_json_schema('claims.claimant')
+"""Test package."""
