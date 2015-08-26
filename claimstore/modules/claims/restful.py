@@ -20,7 +20,7 @@
 
 """Restful resources for the claims module."""
 
-import isodate
+import isodate  # noqa
 from flask import Blueprint, jsonify, request
 
 from claimstore.app import db
@@ -162,7 +162,8 @@ def get_claim():
     """GET service that returns the stored claims."""
     return jsonify(
         json_list=[
-            {'created': c.created.isoformat(),
+            {'received': c.received.isoformat(),
+             'created': c.created.isoformat(),
              'claim_details': c.claim_details} for c in Claim.query.all()
         ]
     )

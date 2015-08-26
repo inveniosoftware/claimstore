@@ -43,6 +43,11 @@ class Claim(db.Model):
         unique=True,
         default=lambda: str(uuid4())
     )
+    received = db.Column(
+        UTCDateTime,
+        default=now_utc,
+        nullable=False
+    )
     created = db.Column(
         UTCDateTime,
         nullable=False
@@ -105,7 +110,7 @@ class Claimant(db.Model):
     )
     joined = db.Column(
         UTCDateTime,
-        default=now_utc(),
+        default=now_utc,
     )
     name = db.Column(
         db.String,
