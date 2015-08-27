@@ -21,13 +21,9 @@
 """Definition of specific exceptions."""
 
 
-class InvalidUsage(Exception):
+class RestApiException(Exception):
 
-    """Invalid request.
-
-    Used to identify that a request is not correct (e.g. it does not follow the
-    proper JSON schema).
-    """
+    """Generic Rest API exception."""
 
     status_code = 400
 
@@ -37,11 +33,31 @@ class InvalidUsage(Exception):
         self.message = message
         if status_code is not None:
             self.status_code = status_code
-        self.payload = payload
+        self.details = details
 
     def to_dict(self):
         """Return exception as a dictionary."""
-        rv = dict(self.payload or ())
-        rv['status'] = 'error'
-        rv['message'] = self.message
+        rv = {
+            'status': 'error',
+            'message': self.message
+        }
+        if self.details:
+            rv['details'] = self.details
         return rv
+
+
+class InvalidJSONData(RestApiException):
+
+    """Invalid JSON Data.
+
+    Used to identify that JSON data that do not follow the appropiate schema.
+    """
+
+    pass
+
+
+class InvalidRequest(RestApiException):
+
+    """The REST request could not be fulfilled."""
+
+    pass

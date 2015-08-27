@@ -93,6 +93,7 @@ setup(
     platforms='any',
     install_requires=[
         'flask',
+        'flask-restful',
         'flask-sqlalchemy',
         'isodate',
         'jsonschema',

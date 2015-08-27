@@ -20,17 +20,17 @@
 
 """Flask app creation."""
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from claimstore.core.exception import InvalidUsage
+from claimstore.core.exception import RestApiException
 
 # Define the database object which is imported
 # by modules and controllers
 db = SQLAlchemy()
 
 
-def handle_invalid_usage(error):
+def handle_restful_exceptions(error):
     """Handle invalid usage exception."""
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
@@ -45,11 +45,11 @@ def create_app(db_create_all=False):
     app.config.from_object('config')
 
     # Blueprints
-    from claimstore.modules.claims.restful import claims_restful
-    from claimstore.modules.claims.views import claims_views
+    from claimstore.modules.claims.restful import blueprint as restful_bp
+    from claimstore.modules.claims.views import blueprint as views_bp
 
-    app.register_blueprint(claims_views)
-    app.register_blueprint(claims_restful)
+    app.register_blueprint(views_bp)
+    app.register_blueprint(restful_bp)
 
     # Init databse
     db.init_app(app)
@@ -75,10 +75,14 @@ def create_app(db_create_all=False):
             db.session.commit()
 
     # Register exceptions
-    app.register_error_handler(InvalidUsage, handle_invalid_usage)
+    app.register_error_handler(RestApiException, handle_restful_exceptions)
 
     @app.errorhandler(404)
     def not_found(error):
+        if 'application/json' in request.headers['Content-Type']:
+            return jsonify({
+                'status': 'error',
+                'message': 'Resource not found.'}), 404
         return render_template('404.html'), 404
 
     return app

@@ -24,19 +24,19 @@ from flask import Blueprint, render_template
 
 from claimstore.core.json import get_json_schema
 
-claims_views = Blueprint(
+blueprint = Blueprint(
     'claims_views',
     __name__,
 )
 
 
-@claims_views.route('/', methods=['GET'])
+@blueprint.route('/', methods=['GET'])
 def index():
     """Render the home page for ClaimStore."""
     return render_template('cover.html', active_menu='home')
 
 
-@claims_views.route('/subscription', methods=['GET'])
+@blueprint.route('/subscription', methods=['GET'])
 def subscription():
     """Render the subscription form page."""
     return render_template(
@@ -45,13 +45,13 @@ def subscription():
     )
 
 
-@claims_views.route('/api', methods=['GET'])
+@blueprint.route('/api', methods=['GET'])
 def api():
     """Render the api documenation page."""
     return render_template("api.html", active_menu='api')
 
 
-@claims_views.route('/contact', methods=['GET'])
+@blueprint.route('/contact', methods=['GET'])
 def contact():
     """Render the contact page."""
     return render_template("contact.html", active_menu='contact')
