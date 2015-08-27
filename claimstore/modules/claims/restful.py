@@ -110,7 +110,7 @@ class Claims(ClaimStoreResource):
         self.validate_json(json_data)
 
         try:
-            created_dt = isodate.parse_datetime(json_data['claim']['datetime'])
+            created_dt = isodate.parse_datetime(json_data['claim']['created'])
         except isodate.ISO8601Error as e:
             raise InvalidJSONData(
                 'Claim datetime does not follow ISO 8601 Z',
@@ -166,7 +166,6 @@ class Claims(ClaimStoreResource):
         """GET service that returns the stored claims."""
         return [{
             'received': c.received.isoformat(),
-            'created': c.created.isoformat(),
             'claim_details': c.claim_details
         } for c in Claim.query.all()]
 

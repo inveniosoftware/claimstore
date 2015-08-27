@@ -192,7 +192,7 @@
                   </div>
                   <div class="tab-pane curl" id="curl-claim">
                     <br />
-                    <pre>curl http://localhost:8080/claims -H "Content-Type: application/json" -d '{"claimant":"CDS", "object": {"type": "CDS_RECORD_ID", "value": "CMS-PAS-HIG-14-008"}, "claim": {"predicate": "is_same_as", "datetime": "2015-05-25 11:00:00 UTC", "certainty": 100, "arguments":{"human": "False", "actor": "CDS_submission"}}, "subject": {"type": "CDS_REPORT_NUMBER", "value": "2001192"}}' -X POST -v</pre>
+                    <pre>curl http://localhost:8080/claims -H "Content-Type: application/json" -d '{"claimant":"CDS", "object": {"type": "CDS_RECORD_ID", "value": "CMS-PAS-HIG-14-008"}, "claim": {"predicate": "is_same_as", "created": "2015-05-25 11:00:00 UTC", "certainty": 100, "arguments":{"human": "False", "actor": "CDS_submission"}}, "subject": {"type": "CDS_REPORT_NUMBER", "value": "2001192"}}' -X POST -v</pre>
                   </div>
                   <div class="tab-pane" id="python-claim">
                     <br />
