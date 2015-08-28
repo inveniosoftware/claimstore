@@ -22,9 +22,11 @@
 
 import isodate  # noqa
 from flask import Blueprint, request
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, inputs, reqparse  # noqa
+from sqlalchemy import or_
 
 from claimstore.app import db
+from claimstore.core.datetime import loc_date_utc
 from claimstore.core.exception import InvalidJSONData, InvalidRequest
 from claimstore.core.json import validate_json
 from claimstore.modules.claims.models import Claim, Claimant, IdentifierType, \
@@ -84,7 +86,7 @@ class Subscription(ClaimStoreResource):
                         url=persistent_id['url'],
                         example_value=persistent_id['example_value'],
                         example_url=persistent_id['example_url'],
-                        claimant_id=new_claimant.uid
+                        claimant_id=new_claimant.id
                     )
                     db.session.add(new_persistent_id)
             db.session.commit()
@@ -93,11 +95,88 @@ class Subscription(ClaimStoreResource):
             raise InvalidRequest('This claimant is already registered')
 
 
-class Claims(ClaimStoreResource):
+class ClaimsResource(ClaimStoreResource):
 
     """Resource that handles all claims-related requests."""
 
     json_schema = 'claims.claim'
+
+    def __init__(self):
+        """Initialise Claims Resource."""
+        super(ClaimStoreResource, self).__init__()
+        self.get_claims_parser = reqparse.RequestParser()
+        self.get_claims_parser.add_argument(
+            'claimant', dest='claimant',
+            type=str, location='args',
+            help='Unique short name of a registered claimant',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'predicate', dest='predicate',
+            type=str, location='args',
+            help='Unique name of a registered predicate',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'subject', dest='subject',
+            type=str, location='args',
+            help='Unique name of a registered identifier',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'object', dest='object',
+            type=str, location='args',
+            help='Unique name of a registered identifier',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'certainty', dest='certainty',
+            type=float, location='args',
+            help='Minimum certainty for a claim (float between 0 and 1.0)',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'human', dest='human',
+            type=int, location='args',
+            help='`1` if human claims. `0` if algorithm. No value shows all',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'actor', dest='actor',
+            type=str, location='args',
+            help='Name of the actor of the claim',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'role', dest='role',
+            type=str, location='args',
+            help='Role of the actor',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'since', dest='since',
+            type=inputs.date, location='args',
+            help='Date with the format YYYY-MM-DD',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'until', dest='until',
+            type=inputs.date, location='args',
+            help='Date with the format YYYY-MM-DD',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'type', dest='type',
+            type=str, location='args',
+            help='Identifier Type (e.g. DOI)',
+            trim=True
+        )
+        self.get_claims_parser.add_argument(
+            'value', dest='value',
+            type=str, location='args',
+            help='Value of an Identifier Type',
+            trim=True
+        )
 
     def post(self):
         """Record a new claim.
@@ -113,7 +192,7 @@ class Claims(ClaimStoreResource):
             created_dt = isodate.parse_datetime(json_data['claim']['created'])
         except isodate.ISO8601Error as e:
             raise InvalidJSONData(
-                'Claim datetime does not follow ISO 8601 Z',
+                'Claim `created` datetime does not follow ISO 8601 Z',
                 details=str(e)
             )
 
@@ -133,7 +212,7 @@ class Claims(ClaimStoreResource):
         if not object_type:
             raise InvalidRequest('Object Type not registered')
 
-        if subject_type.uid == object_type.uid:
+        if subject_type.id == object_type.id:
             raise InvalidRequest('Subject and Object cannot have the same \
                 identifier type')
 
@@ -146,11 +225,11 @@ class Claims(ClaimStoreResource):
         arguments = json_data['claim'].get('arguments', {})
         new_claim = Claim(
             created=created_dt,
-            claimant_id=claimant.uid,
-            subject_type_id=subject_type.uid,
+            claimant=claimant,
+            subject_type_id=subject_type.id,
             subject_value=json_data['subject']['value'],
-            predicate_id=predicate.uid,
-            object_type_id=object_type.uid,
+            predicate_id=predicate.id,
+            object_type_id=object_type.id,
             object_value=json_data['object']['value'],
             certainty=json_data['claim']['certainty'],
             human=arguments.get('human', None),
@@ -164,11 +243,84 @@ class Claims(ClaimStoreResource):
 
     def get(self):
         """GET service that returns the stored claims."""
+        args = self.get_claims_parser.parse_args()
+        if all(x is None for x in args.values()):  # Avoid false positives (0)
+            claims = Claim.query.all()
+        else:
+            claims = Claim.query
+
+            if args.since:
+                claims = claims.filter(
+                    Claim.created >= loc_date_utc(args.since)
+                )
+
+            if args.until:
+                claims = claims.filter(
+                    Claim.created < loc_date_utc(args.until)
+                )
+
+            if args.claimant:
+                claims = claims. \
+                    join(Claim.claimant). \
+                    filter(Claimant.name == args.claimant)
+
+            if args.predicate:
+                claims = claims. \
+                    join(Claim.predicate). \
+                    filter(Predicate.name == args.predicate)
+
+            if args.certainty is not None:
+                claims = claims.filter(Claim.certainty >= args.certainty)
+
+            if args.human is not None:
+                claims = claims.filter(Claim.human == args.human)
+
+            if args.actor:
+                claims = claims.filter(Claim.actor.like(args.actor))
+
+            if args.role:
+                claims = claims.filter(Claim.role.like(args.role))
+
+            if args.subject or args.object:
+                # Using subject/object makes type/value incompatible.
+                subject_type = db.aliased(IdentifierType, name='SubjectType')
+                object_type = db.aliased(IdentifierType, name='ObjectType')
+                if args.subject:
+                    claims = claims. \
+                        join(subject_type,
+                             Claim.subject_type_id == subject_type.id). \
+                        filter(subject_type.name == args.subject)
+
+                if args.object:
+                    claims = claims. \
+                        join(object_type,
+                             Claim.object_type_id == object_type.id). \
+                        filter(object_type.name == args.object)
+            else:
+                # Type searches both in subject and object
+                if args.type:
+                    claims = claims. \
+                        join(
+                            IdentifierType,
+                            or_(
+                                Claim.subject_type_id == IdentifierType.id,
+                                Claim.object_type_id == IdentifierType.id
+                            )
+                        ).filter(IdentifierType.name == args.type)
+
+                if args.value:
+                    claims = claims. \
+                        filter(
+                            or_(
+                                Claim.subject_value.like(args.value),
+                                Claim.object_value.like(args.value))
+                        )
+
         return [{
             'received': c.received.isoformat(),
             'claim_details': c.claim_details
-        } for c in Claim.query.all()]
+        } for c in claims]
 
 
 claims_api.add_resource(Subscription, '/subscribe', endpoint='subscribe')
-claims_api.add_resource(Claims, '/claims', endpoint='claims')
+claims_api.add_resource(ClaimsResource, '/claims', endpoint='claims')

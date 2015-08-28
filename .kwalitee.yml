@@ -1,4 +1,5 @@
 components:
+- api
 - docker
 - docs
 - global

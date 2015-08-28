@@ -28,3 +28,12 @@ import pytz
 def now_utc():
     """Return UTC datetime with tzinfo."""
     return pytz.utc.localize(datetime.utcnow())
+
+
+def loc_date_utc(date):
+    """Localise a naive date in UTC.
+
+    :param date: naive date
+    :returns: date with UTC tzinfo
+    """
+    return pytz.utc.localize(date)

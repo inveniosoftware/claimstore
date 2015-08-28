@@ -51,12 +51,6 @@ claimstore.core.db.types
 .. automodule:: claimstore.core.db.types
    :members:
 
-claimstore.core.decorators
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: claimstore.core.decorators
-   :members:
-
 claimstore.modules
 ------------------
 

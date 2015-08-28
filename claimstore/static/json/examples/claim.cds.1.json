@@ -7,9 +7,9 @@
   "claim": {
     "predicate": "is_same_as",
     "created": "2015-05-25T11:00:00Z",
-    "certainty": 100,
+    "certainty": 1.0,
     "arguments": {
-      "human": "False",
+      "human": 0,
       "actor": "CDS_submission"
     }
   },

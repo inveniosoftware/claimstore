@@ -33,7 +33,7 @@ class Claim(db.Model):
 
     """Represents a Claim."""
 
-    uid = db.Column(
+    id = db.Column(
         db.Integer,
         primary_key=True
     )
@@ -54,12 +54,12 @@ class Claim(db.Model):
     )
     claimant_id = db.Column(
         db.Integer,
-        db.ForeignKey('claimant.uid'),
+        db.ForeignKey('claimant.id'),
         nullable=False
     )
     subject_type_id = db.Column(
         db.Integer,
-        db.ForeignKey('identifier_type.uid'),
+        db.ForeignKey('identifier_type.id'),
         nullable=False
     )
     subject_value = db.Column(
@@ -68,19 +68,19 @@ class Claim(db.Model):
     )
     predicate_id = db.Column(
         db.Integer,
-        db.ForeignKey('predicate.uid'),
+        db.ForeignKey('predicate.id'),
         nullable=False
     )
     certainty = db.Column(
-        db.Integer,
+        db.Float,
         nullable=False
     )
-    human = db.Column(db.Boolean)
+    human = db.Column(db.Integer)
     actor = db.Column(db.String)
     role = db.Column(db.String)
     object_type_id = db.Column(
         db.Integer,
-        db.ForeignKey('identifier_type.uid'),
+        db.ForeignKey('identifier_type.id'),
         nullable=False
     )
     object_value = db.Column(
@@ -98,7 +98,7 @@ class Claimant(db.Model):
 
     """Represents a Claimant."""
 
-    uid = db.Column(
+    id = db.Column(
         db.Integer,
         primary_key=True,
     )
@@ -120,6 +120,13 @@ class Claimant(db.Model):
     )
     url = db.Column(db.String)
 
+    claim = db.relationship(
+        'Claim',
+        backref='claimant',
+        cascade="all, delete-orphan",
+        lazy='dynamic'
+    )
+
     def __repr__(self):
         """Printable version of the Claimant object."""
         return '<Claimant {}>'.format(self.uuid)
@@ -129,7 +136,7 @@ class IdentifierType(db.Model):
 
     """Represents an identifier type."""
 
-    uid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(
         db.String,
         nullable=False,
@@ -154,7 +161,7 @@ class IdentifierType(db.Model):
     )
     claimant_id = db.Column(
         db.Integer,
-        db.ForeignKey('claimant.uid')
+        db.ForeignKey('claimant.id')
     )
 
     def __repr__(self):
@@ -170,12 +177,18 @@ class Predicate(db.Model):
     is_same_as.
     """
 
-    uid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(
         db.String,
         nullable=False,
         unique=True,
         index=True
+    )
+    claim = db.relationship(
+        'Claim',
+        backref='predicate',
+        cascade="all, delete-orphan",
+        lazy='dynamic'
     )
 
     def __repr__(self):

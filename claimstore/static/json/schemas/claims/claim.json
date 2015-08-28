@@ -39,10 +39,10 @@
           "format": "date-time"
         },
         "certainty": {
-          "description": "Certainty of the claim",
+          "description": "Certainty of the claim (0 to 1.0)",
           "type": "number",
           "minimum": 0,
-          "maximum": 100
+          "maximum": 1
         },
         "arguments": {
           "description": "Arguments supporting the certainty",
@@ -50,8 +50,8 @@
           "properties": {
             "human": {
               "description": "The claim was done by a human or an algorithm",
-              "type": "string",
-              "enum": ["True", "False"]
+              "type": "number",
+              "enum": [0, 1]
             },
             "actor": {
               "description": "Who assessed the certainty",

@@ -1,13 +1,13 @@
 {
   "claimant": "INSPIRE",
   "subject": {
-    "type": "ARXIV_ID",
+    "type": "INSPIRE_RECORD_ID",
     "value": "cond-mat/9906097"
   },
   "claim": {
     "predicate": "is_same_as",
     "created": "2015-05-25T11:00:00Z",
-    "certainty": 0.8,
+    "certainty": 0.5,
     "arguments": {
       "human": 1,
       "actor": "John Doe",
@@ -15,7 +15,7 @@
     }
   },
   "object": {
-    "type": "DOI",
+    "type": "CDS_RECORD_ID",
     "value": "C10.1103/PhysRevE.62.7422"
   }
 }
