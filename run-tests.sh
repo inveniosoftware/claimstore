@@ -18,4 +18,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+sphinx-build -qnNW docs docs/_build/html
 python setup.py test
+sphinx-build -qnNW -b doctest docs docs/_build/doctest
