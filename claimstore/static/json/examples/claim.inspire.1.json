@@ -6,7 +6,7 @@
   },
   "claim": {
     "predicate": "is_same_as",
-    "created": "2015-05-25T11:00:00Z",
+    "created": "2015-04-25T11:00:00Z",
     "certainty": 0.8,
     "arguments": {
       "human": 1,

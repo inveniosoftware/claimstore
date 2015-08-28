@@ -22,6 +22,13 @@
       "url": "http://cds.cern.ch/author/<CDS_AUTHOR_ID>",
       "example_value": "J.R. Ellis.1",
       "example_url": "http://cds.cern.ch/author/J.R.Ellis.1"
+    },
+    {
+      "type": "ARXIV_ID",
+      "description": "ARXIV data set",
+      "url": "http://arxiv.org/abs/<ARXIV_ID>",
+      "example_value": "0000.00000",
+      "example_url": "http://arxiv.org/abs/0000.00000"
     }
   ]
 }

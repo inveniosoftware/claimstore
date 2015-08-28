@@ -15,6 +15,13 @@
       "url": "http://inspirehep.net/author/<INSPIRE_AUTHOR_ID>",
       "example_value": "J.R. Ellis.1",
       "example_url": "http://inspirehep.net/author/J.R.Ellis.1"
+    },
+    {
+      "type": "DOI",
+      "description": "DOI identifier",
+      "url": "http://inspirehep.net/doi/<DOI>",
+      "example_value": "00.0000/INSPIREHEP.DATA.RF5P.6M3K",
+      "example_url": "http://inspirehep.net/doi/00.0000/INSPIREHEP.DATA.RF5P.6M3K"
     }
   ]
 }
