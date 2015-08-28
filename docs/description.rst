@@ -124,7 +124,7 @@ bibcode ``2005astro.ph..1001H``::
        },
       "claim": {
           "predicate": "is_same_as",
-          "datetime": "2015-05-26T11:00:00Z",
+          "created": "2015-05-26T11:00:00Z",
           "certainty": 1,
       },
       "object": {
@@ -151,7 +151,7 @@ by a trusted program::
        },
       "claim": {
           "predicate": "is_same_as",
-          "datetime": "2015-05-26T11:00:00Z",
+          "created": "2015-05-26T11:00:00Z",
           "certainty": 0.9,
           "arguments": {
              "human": 0,
@@ -177,7 +177,7 @@ persistent CDS record ID 2001192::
        },
       "claim": {
           "predicate": "is_same_as",
-          "datetime": "2015-05-26T11:00:00Z",
+          "created": "2015-05-26T11:00:00Z",
           "certainty": 1,
           "arguments": {
               "human": 0,
@@ -204,7 +204,7 @@ an apprentice cataloguer::
        },
       "claim": {
           "predicate": "is_same_as",
-          "datetime": "2015-05-26T11:00:00Z",
+          "created": "2015-05-26T11:00:00Z",
           "certainty": 0.8,
           "arguments": {
               "human": 1,
@@ -243,7 +243,7 @@ in chronological order, for example::
        },
       "claim": {
           "predicate": "is_same_as",
-          "datetime": "2015-05-26T11:00:00Z",
+          "created": "2015-05-26T11:00:00Z",
           "certainty": 0.8,
           "arguments": {
               "human": 1,
@@ -264,7 +264,7 @@ in chronological order, for example::
        },
       "claim": {
           "predicate": "is_same_as",
-          "datetime": "2015-05-26T11:00:00Z",
+          "created": "2015-05-26T11:00:00Z",
           "certainty": 1.0,
           "arguments": {
               "human": 1,

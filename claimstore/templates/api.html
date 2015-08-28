@@ -114,7 +114,16 @@
                   </div>
                   <div class="tab-pane" id="python-subscribe">
                     <br />
-                    <pre>python</pre>
+                    <pre>
+import json
+import requests
+
+url = "http://localhost:8080/subscribe/
+headers = {"Content-Type": "application/json"}
+with open('$PROJECT_HOME/claimstore/static/json/examples/claimant.cds.json') as f:
+    data=json.dumps(f.read())
+r = requests.post(url, data=data, headers=headers)
+                    </pre>
                   </div>
                 </div>
               </td>
@@ -196,7 +205,15 @@
                   </div>
                   <div class="tab-pane" id="python-claim">
                     <br />
-                    <pre>python</pre>
+                                        <pre>
+import json
+import requests
+
+url = "http://localhost:8080/claims/
+headers = {"Content-Type": "application/json"}
+with open('$PROJECT_HOME/claimstore/static/json/examples/claim.cds.1.json') as f:
+    data=json.dumps(f.read())
+r = requests.post(url, data=data, headers=headers)</pre>
                   </div>
                 </div>
               </td>
@@ -226,6 +243,26 @@
             <tr>
               <th scope="row">URL</th>
               <td>http://localhost:8080/claims</td>
+            </tr>
+            <tr>
+              <th scope="row">URL parameters</th>
+              <p>All parameters are optional.</p>
+              <td>
+                <ul>
+                  <li>since: claims created from this date (format: YYYY-MM-DD).</li>
+                  <li>until: claims created until this date (format: YYYY-MM-DD).</li>
+                  <li>claimant: claimant's name as it was registered (e.g. CDS).</li>
+                  <li>predicate: predicate's name (e.g. is_same_as) </li>
+                  <li>certainty: number between 0 and 1.0 (e.g. 0.5). It will search for claims with at least the specified certainty.</li>
+                  <li>human: enter 1 if searching for human-created claims, 0 for algorithms and nothing for retrieving all.</li>
+                  <li>actor: actor's name (one can use %).</li>
+                  <li>role: actor's role (one can use %).</li>
+                  <li>type: identifier type (e.g. DOI).</li>
+                  <li>value: identifier value (e.g. 20110301).</li>
+                  <li>subject: identifier type used as a subject type.</li>
+                  <li>object: identifier type used as an object type.</li>
+                </ul>
+              </td>
             </tr>
             <tr>
               <th scope="row">Method</th>
@@ -265,7 +302,11 @@
                   </div>
                   <div class="tab-pane" id="python-list-claims">
                     <br />
-                    <pre>python</pre>
+                    <pre>
+import requests
+response = requests.get("http://localhost:8080/claims")
+print response.json()
+                    </pre>
                   </div>
                 </div>
               </td>
