@@ -260,3 +260,10 @@ class RestfulAPITestCase(ClaimStoreTestCase):
             '/claims?subject=CDS_RECORD_ID&object=CDS_REPORT_NUMBER'
         )
         self.assertEqual(len(resp.json), 1)
+
+    def test_get_identifiers(self):
+        """Testing GET identifiers api."""
+        self._populate_for_search()
+        resp = self.test_app.get('/identifiers')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(len(resp.json), 7)

@@ -22,7 +22,6 @@
 
 import isodate  # noqa
 from flask import Blueprint, request
-from flask_restful import Api, Resource, inputs, reqparse  # noqa
 from sqlalchemy import or_
 
 from claimstore.app import db
@@ -31,6 +30,8 @@ from claimstore.core.exception import InvalidJSONData, InvalidRequest
 from claimstore.core.json import validate_json
 from claimstore.modules.claims.models import Claim, Claimant, IdentifierType, \
     Predicate
+
+from flask_restful import Api, Resource, inputs, reqparse  # isort:skip
 
 blueprint = Blueprint(
     'claims_restful',
@@ -322,5 +323,22 @@ class ClaimsResource(ClaimStoreResource):
         } for c in claims]
 
 
-claims_api.add_resource(Subscription, '/subscribe', endpoint='subscribe')
-claims_api.add_resource(ClaimsResource, '/claims', endpoint='claims')
+class IdentifierResource(ClaimStoreResource):
+
+    """Resource that handles Identifier requests."""
+
+    def get(self):
+        """GET service that returns the stored identifiers."""
+        id_types = IdentifierType.query.all()
+        return [id_type.name for id_type in id_types]
+
+
+claims_api.add_resource(Subscription,
+                        '/subscribe',
+                        endpoint='subscribe')
+claims_api.add_resource(ClaimsResource,
+                        '/claims',
+                        endpoint='claims')
+claims_api.add_resource(IdentifierResource,
+                        '/identifiers',
+                        endpoint='identifiers')

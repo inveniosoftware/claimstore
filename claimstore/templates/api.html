@@ -34,6 +34,7 @@
       <li><a class="page-scroll" href="#subscription">Subscribe</a></li>
       <li><a class="page-scroll" href="#submitclaim">Submit claims</a></li>
       <li><a class="page-scroll" href="#listclaims">List claims</a></li>
+      <li><a class="page-scroll" href="#listidentifiers">List identifiers</a></li>
     </ul>
   </div>
   <div class="col-sm-9 col-md-9 doc-content">
@@ -238,7 +239,7 @@ r = requests.post(url, data=data, headers=headers)</pre>
           <tbody>
             <tr>
               <th scope="row">Description</th>
-              <td>List of claims in the ClaimStore</td>
+              <td>List of claims in ClaimStore</td>
             </tr>
             <tr>
               <th scope="row">URL</th>
@@ -305,6 +306,79 @@ r = requests.post(url, data=data, headers=headers)</pre>
                     <pre>
 import requests
 response = requests.get("http://localhost:8080/claims")
+print response.json()
+                    </pre>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="listidentifiers">
+      <h3>List identifiers</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <colgroup>
+            <col class="col-xs-1">
+            <col class="col-xs-7">
+          </colgroup>
+          <thead>
+            <tr>
+              <th colspan="2">GET /identifiers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Description</th>
+              <td>List of identifiers in ClaimStore</td>
+            </tr>
+            <tr>
+              <th scope="row">URL</th>
+              <td>http://localhost:8080/identifiers</td>
+            </tr>
+            <tr>
+              <th scope="row">Method</th>
+              <td>GET</td>
+            </tr>
+            <tr>
+              <th scope="row">Success response</th>
+              <td>
+                <p>JSON list with all the identifiers.</p>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Error response</th>
+              <td>
+                <ul>
+                  <li>Code: <code>40X</code></li>
+                  <li>Body: JSON with status and message</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Example</th>
+              <td>
+                <ul id="example-tabs-list" class="nav nav-tabs">
+                  <li role="presentation" class="active"><a href="#httpie-list-identifiers" data-toogle="tab">httpie</a></li>
+                  <li role="presentation"><a href="#curl-list-identifiers" data-toogle="tab">cURL</a></li>
+                  <li role="presentation"><a href="#python-list-identifiers" data-toogle="tab">Python</a></li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="httpie-list-identifiers">
+                    <br />
+                    <pre>http GET http://localhost:8080/identifiers</pre>
+                  </div>
+                  <div class="tab-pane curl" id="curl-list-identifiers">
+                    <br />
+                    <pre>curl http://localhost:8080/identifiers</pre>
+                  </div>
+                  <div class="tab-pane" id="python-list-identifiers">
+                    <br />
+                    <pre>
+import requests
+response = requests.get("http://localhost:8080/identifiers")
 print response.json()
                     </pre>
                   </div>
