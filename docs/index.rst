@@ -2,6 +2,8 @@
  ClaimStore
 ============
 
+.. currentmodule:: claimstore
+
 About
 =====
 
