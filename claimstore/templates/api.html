@@ -244,7 +244,7 @@ r = requests.post(url, data=data, headers=headers)</pre>
             </tr>
             <tr>
               <th scope="row">URL</th>
-              <td>http://localhost:8080/claims</td>
+              <td><a href="{{ url_for('claims_restful.claims') }}">http://localhost:8080/claims</a></td>
             </tr>
             <tr>
               <th scope="row">URL parameters</th>
@@ -337,7 +337,7 @@ print response.json()
             </tr>
             <tr>
               <th scope="row">URL</th>
-              <td>http://localhost:8080/identifiers</td>
+              <td><a href="{{ url_for('claims_restful.identifiers') }}">http://localhost:8080/identifiers</a></td>
             </tr>
             <tr>
               <th scope="row">Method</th>
@@ -410,7 +410,7 @@ print response.json()
             </tr>
             <tr>
               <th scope="row">URL</th>
-              <td>http://localhost:8080/predicates</td>
+              <td><a href="{{ url_for('claims_restful.predicates') }}">http://localhost:8080/predicates</a></td>
             </tr>
             <tr>
               <th scope="row">Method</th>

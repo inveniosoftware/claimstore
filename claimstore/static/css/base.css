@@ -169,3 +169,14 @@ body {
 .error-actions > a {
   padding: 0 10px;
 }
+
+/*
+ * Cover
+ */
+ .cover-content h4 {
+  color: #BB5656;
+ }
+
+ .cover-content .lead {
+  padding: 30px 0;
+ }

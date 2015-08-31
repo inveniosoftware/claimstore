@@ -1,0 +1,88 @@
+{# -*- coding: utf-8 -*-
+#
+# This file is part of ClaimStore.
+# Copyright (C) 2015 CERN.
+#
+# ClaimStore is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# ClaimStore is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with ClaimStore; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <div id="submission_form_holder"></div>
+  <button id="submit" class="btn btn-success" type="submit">Submit</button>
+
+{% endblock %}
+
+{% block scripts %}
+
+  {{ super() }}
+
+  <script src="{{ url_for('static', filename='js/lib/bootstrap3-typeahead.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lib/jsoneditor.js') }}"></script>
+
+  <script>
+
+    var editor = new JSONEditor($('#submission_form_holder').get(0), {
+        schema: {{ json_schema|safe }},
+        theme: 'bootstrap3',
+        iconlib: 'bootstrap3',
+        disable_edit_json: true,
+        disable_properties: true,
+        disable_collapse: true,
+        disable_array_reorder: true
+      });
+
+    $('#submit').on('click', function() {
+      var errors = editor.validate();
+
+      if(!errors.length) {
+        $.ajax({
+          type: 'POST',
+          url: '{{ url_for("claims_restful.claims") }}',
+          data: JSON.stringify(editor.getValue()),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function(data) {
+            alert('Submission successful!');
+          },
+          error: function(errMsg) {
+            alert(errMsg.responseJSON.message);
+          }
+        });
+      } else {
+        alert('All fields are mandatory. Please, fill them all.');
+      }
+    });
+
+    $("input[name^=root\\[][name$=\\]\\[type\\]]").typeahead({
+      source: function(query, process) {
+        jQuery.ajax({
+          url: '{{ url_for("claims_restful.identifiers") }}',
+          type: 'GET',
+          data: {q: query},
+          dataType: 'json',
+          success: function(json){
+            process(json);
+          }
+        });
+      },
+      matcher: function(param) {return true}
+    });
+
+  </script>
+
+{% endblock %}

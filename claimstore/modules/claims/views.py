@@ -45,6 +45,15 @@ def subscription():
     )
 
 
+@blueprint.route('/claimsubmit', methods=['GET'])
+def claimsubmit():
+    """Render the claim submission form page."""
+    return render_template(
+        "claim_submit.html",
+        json_schema=get_json_schema('claims.claim')
+    )
+
+
 @blueprint.route('/api', methods=['GET'])
 def api():
     """Render the API documenation page."""

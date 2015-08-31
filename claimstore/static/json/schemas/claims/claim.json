@@ -1,64 +1,81 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Claim",
-  "description": "Claim provided by a service",
+  "title": "Claim data",
+  "description": "Claim provided by a claimant.",
   "type": "object",
   "properties": {
     "claimant": {
-      "description": "Short name of the service used for subscription",
-      "value": "string"
+      "title": "Claimant",
+      "description": "Short name of the claimant that was used during the subscription (e.g. CERN)",
+      "type": "string",
+      "minLength": 1
     },
     "subject": {
-      "description": "Subject of the predicate (claim)",
+      "title": "Subject",
+      "description": "Subject of the claim predicate",
       "type": "object",
       "properties": {
         "type": {
+          "title": "Identifier type",
           "description": "Type of persistent identifier (e.g. INSPIRE_RECORD_ID)",
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "value": {
+          "title": "Identifier value",
           "description": "Actual value of the identifier",
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
       },
       "required": ["type", "value"],
       "additionalProperties": false
     },
     "claim": {
-      "description": "Type of claim",
+      "title": "Claim predicate",
+      "description": "Type of the claim",
       "type": "object",
       "properties": {
         "predicate": {
-          "description": "Predicate of the claim",
+          "title": "Predicate",
+          "description": "Type of relation between the subject and the object",
           "type": "string",
           "enum": ["is_same_as", "is_different_than", "is_erratum_of", "is_superseded_by", "is_cited_by", "is_software_for", "is_dataset_for"]
         },
         "created": {
+          "title": "Creation datetime",
           "description": "Datetime in which the claim was created",
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "minLength": 1
         },
         "certainty": {
-          "description": "Certainty of the claim (0 to 1.0)",
+          "title": "Certainty",
+          "description": "Certainty of the claim. It must be a value between 0 and 1.0, being 1.0 a confident claim",
           "type": "number",
           "minimum": 0,
-          "maximum": 1
+          "maximum": 1,
+          "minLength": 1
         },
         "arguments": {
-          "description": "Arguments supporting the certainty",
+          "title": "Optional arguments",
+          "description": "Arguments supporting the certainty of the claim",
           "type": "object",
           "properties": {
             "human": {
-              "description": "The claim was done by a human or an algorithm",
+              "title": "Human made",
+              "description": "The claim was done by a human (1) or an algorithm (1)",
               "type": "number",
               "enum": [0, 1]
             },
             "actor": {
-              "description": "Who assessed the certainty",
+              "title": "Actor",
+              "description": "Person who assessed the certainty",
               "type": "string"
             },
             "role": {
-              "description": "Role of the actor",
+              "title": "Role",
+              "description": "Role of the actor (e.g. Cataloguer)",
               "type": "string"
             }
           }
@@ -67,16 +84,21 @@
       "required": ["predicate", "certainty"]
     },
     "object": {
-      "description": "Object of the predicate (claim)",
+      "title": "Object",
+      "description": "Object of the claim predicate",
       "type": "object",
       "properties": {
         "type": {
+          "title": "Identifier type",
           "description": "Type of persistent identifier (e.g. INSPIRE_RECORD_ID)",
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "value": {
+          "title": "Value",
           "description": "Actual value of the identifier",
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
       },
       "required": ["type", "value"],
