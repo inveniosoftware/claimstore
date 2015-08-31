@@ -27,8 +27,16 @@ class RestApiException(Exception):
 
     status_code = 400
 
-    def __init__(self, message, status_code=None, payload=None, details=None):
-        """Initialise the exception."""
+    def __init__(self, message, status_code=None, details=None):
+        """Initialise the exception.
+
+        :param message: Exception message.
+        :type message: str.
+        :param status_code: HTTP status code. By default it is 400.
+        :type status_code: int.
+        :param details: Extra details of the exception.
+        :type details: str.
+        """
         Exception.__init__(self)
         self.message = message
         if status_code is not None:
@@ -50,7 +58,8 @@ class InvalidJSONData(RestApiException):
 
     """Invalid JSON Data.
 
-    Used to identify that JSON data that do not follow the appropiate schema.
+    This exception is raised when  there is some JSON data that does not follow
+    its associated JSON schema.
     """
 
     pass
@@ -58,6 +67,6 @@ class InvalidJSONData(RestApiException):
 
 class InvalidRequest(RestApiException):
 
-    """The REST request could not be fulfilled."""
+    """REST request could not be fulfilled."""
 
     pass

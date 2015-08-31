@@ -32,7 +32,9 @@ def get_json_schema(schema):
 
     :param schema: schema to be fetched. It must be a string with the format:
                    module.schema_name (e.g. claims.claimants).
-    :return: a str with the requested json schema.
+    :type schema: str.
+    :returns: a str with the requested json schema.
+    :rtype: str.
     """
     module_name, schema_name = schema.split(".")
     schema_file_path = os.path.join(
@@ -53,9 +55,12 @@ def validate_json(json_input, schema):
     """Validate JSON against a given schema.
 
     :param json_input: a dict with the full json to be validated.
+    :type json_input: dict.
     :param schema: JSON schema to use in the validation. It must be a string
                    with the format module.schema_name (e.g. claims.claimants).
-    :return: True if json_input follows the schema. False otherwise.
+    :type schema: str.
+    :returns: True if `json_input` follows the schema. False otherwise.
+    :rtype: bool.
     """
     if schema:
         schema_content = get_json_schema(schema)

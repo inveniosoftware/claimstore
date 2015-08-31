@@ -34,6 +34,8 @@ def loc_date_utc(date):
     """Localise a naive date in UTC.
 
     :param date: naive date
+    :type date: datetime.
     :returns: date with UTC tzinfo
+    :rtype: datetime.
     """
     return pytz.utc.localize(date)

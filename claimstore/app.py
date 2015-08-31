@@ -31,7 +31,7 @@ db = SQLAlchemy()
 
 
 def handle_restful_exceptions(error):
-    """Handle invalid usage exception."""
+    """Handle invalid restful request exception."""
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response

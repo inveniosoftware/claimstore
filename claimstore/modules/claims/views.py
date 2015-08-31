@@ -47,7 +47,7 @@ def subscription():
 
 @blueprint.route('/api', methods=['GET'])
 def api():
-    """Render the api documenation page."""
+    """Render the API documenation page."""
     return render_template("api.html", active_menu='api')
 
 

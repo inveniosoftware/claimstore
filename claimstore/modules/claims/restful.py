@@ -47,7 +47,11 @@ class ClaimStoreResource(Resource):
     json_schema = None
 
     def validate_json(self, json_data):
-        """Validate that json_data follows the appropiate JSON schema."""
+        """Validate that json_data follows the appropiate JSON schema.
+
+        :param json_data: JSON data to be validated.
+        :raises: InvalidJSONData
+        """
         try:
             validate_json(json_data, self.json_schema)
         except Exception as e:
@@ -65,7 +69,11 @@ class Subscription(ClaimStoreResource):
     json_schema = 'claims.claimant'
 
     def post(self):
-        """Process post request."""
+        """Subscribe a new claimant.
+
+        Receives JSON data with all the information of a new claimant and it
+        stores it in the database.
+        """
         json_data = request.get_json()
         self.validate_json(json_data)
         if not Claimant.query.filter_by(name=json_data['name']).first():
@@ -243,7 +251,36 @@ class ClaimsResource(ClaimStoreResource):
         return {'status': 'success', 'uuid': new_claim.uuid}
 
     def get(self):
-        """GET service that returns the stored claims."""
+        """GET service that returns the stored claims.
+
+
+        Many arguments can be used in order to filter the output. Only AND
+        queries are preformed at the moment.
+
+        List of arguments:
+
+        * since: datetime (YYYY-MM-DD) - it fetches claims that were created
+          from this given datetime.
+        * until: datetime (YYYY-MM-DD) - it fetches claims that were created
+          up to this given datetime.
+        * claimant: claimant's unique name - it fetches claims submitted by the
+          specified claimant.
+        * predicate: predicate's unique name - it finds claims using this
+          predicate (e.g. is_same_as).
+        * certainty: float number between 0 and 1.0. It will search for claims
+          with at least the specified certainty.
+        * human: enter 1 if searching for human-created claims, 0 for
+          algorithms and nothing in order to retrieve all.
+        * actor: it filters claims by their actor's name (one can use %).
+        * role: it filters claims by their actor's role (one can use %).
+        * type: it finds claims using a certain identifier type (either subject
+          or object). For instance: DOI.
+        * value: it fetches all the claims with that identifier value.
+        * subject: it fetches claims using a given identifier type as a subject
+          type.
+        * object: it fetches claims using a given identifier type as an object
+          type.
+        """
         args = self.get_claims_parser.parse_args()
         if all(x is None for x in args.values()):  # Avoid false positives (0)
             claims = Claim.query.all()
