@@ -267,3 +267,10 @@ class RestfulAPITestCase(ClaimStoreTestCase):
         resp = self.test_app.get('/identifiers')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.json), 7)
+
+    def test_get_predicates(self):
+        """Testing GET predicates api."""
+        self._populate_for_search()
+        resp = self.test_app.get('/predicates')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(len(resp.json), 7)

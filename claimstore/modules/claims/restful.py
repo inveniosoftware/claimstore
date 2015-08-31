@@ -333,6 +333,16 @@ class IdentifierResource(ClaimStoreResource):
         return [id_type.name for id_type in id_types]
 
 
+class PredicateResource(ClaimStoreResource):
+
+    """Resource that handles Predicate requests."""
+
+    def get(self):
+        """GET service that returns the stored predicates."""
+        predicates = Predicate.query.all()
+        return [pred.name for pred in predicates]
+
+
 claims_api.add_resource(Subscription,
                         '/subscribe',
                         endpoint='subscribe')
@@ -342,3 +352,6 @@ claims_api.add_resource(ClaimsResource,
 claims_api.add_resource(IdentifierResource,
                         '/identifiers',
                         endpoint='identifiers')
+claims_api.add_resource(PredicateResource,
+                        '/predicates',
+                        endpoint='predicates')
