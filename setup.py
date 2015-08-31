@@ -82,7 +82,7 @@ setup(
     name='claimstore',
     version=version,
     url='https://github.com/inveniosoftware/claimstore',
-    license='GPLv2',
+    license='GPLv3',
     author='CERN',
     author_email='info@invenio-software.org',
     description=__doc__,
