@@ -92,9 +92,9 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'flask',
-        'flask-restful',
-        'flask-sqlalchemy',
+        'Flask',
+        'Flask-RESTful',
+        'Flask-SQLAlchemy',
         'isodate',
         'jsonschema',
         'psycopg2',
