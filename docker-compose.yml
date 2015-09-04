@@ -20,11 +20,11 @@
 
 web:
   build: .
-  command: python run.py --initdb
+  command: bash -c "claimstore initdb && claimstore populatedb && python run.py"
   environment:
     - SQLALCHEMY_DATABASE_URI=postgres://postgres:postgres@db:5432/postgres
   ports:
-    - "8080:8080"
+    - "5000:5000"
   volumes:
     - .:/code
   links:

@@ -18,16 +18,36 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Basic run module."""
+"""Claimant fixtures."""
 
-from claimstore.app import create_app
+import json
+import os
+
+import pytest
+
+CLAIMANT_CDS_FN = 'claimant.cds.json'
+CLAIMANT_INSPIRE_FN = 'claimant.inspire.json'
 
 
-def main():
-    """Create app and run server."""
-    app = create_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+@pytest.fixture
+def load_claimant(app, json_filename=CLAIMANT_CDS_FN):
+    """Fixture that returns the JSON data representing a claimant."""
+    with open(os.path.join(
+        app.config['BASE_DIR'],
+        'claimstore',
+        'modules',
+        'claims',
+        'static',
+        'json',
+        'examples',
+        json_filename
+    )) as f:
+        return json.loads(f.read())
 
 
-if __name__ == '__main__':
-    main()
+@pytest.fixture
+def create_claimant(test_app, json_filename=CLAIMANT_CDS_FN):
+    """Fixture that creates a claimant."""
+    test_app.post_json(
+        '/subscribe',
+        load_claimant(test_app.app, json_filename))

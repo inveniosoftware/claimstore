@@ -18,78 +18,20 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""claimstore.modules.claims.restful test suite."""
+"""claimstore.modules.claims.restful test suite.
 
-import json
-import os
+isort:skip_file
+"""
 
-import pytest  # isort:skip
-from webtest import TestApp  # isort:skip
+from webtest import TestApp
 
-from .base import ClaimStoreTestCase  # isort:skip
+from claimstore.modules.claims.fixtures.claim import CLAIM_CDS1_FN, \
+    CLAIM_INSPIRE1_FN, CLAIM_INSPIRE2_FN, create_claim, load_claim
+from claimstore.modules.claims.fixtures.claimant import CLAIMANT_CDS_FN, \
+    CLAIMANT_INSPIRE_FN, create_claimant, load_claimant
+from claimstore.modules.claims.fixtures.predicate import create_all_predicates
 
-
-JSON_EXAMPLES_PATH = os.path.join(
-    'claimstore',
-    'static',
-    'json',
-    'examples'
-)
-
-
-@pytest.fixture(scope='module')
-def claimant_example_cds(app):
-    """Fixture that returns a JSON example of a claimant."""
-    with open(os.path.join(
-        app.config['BASE_DIR'],
-        JSON_EXAMPLES_PATH,
-        'claimant.cds.json'
-    )) as f:
-        return json.loads(f.read())
-
-
-@pytest.fixture(scope='module')
-def claimant_example_inspire(app):
-    """Fixture that returns a JSON example of a claimant."""
-    with open(os.path.join(
-        app.config['BASE_DIR'],
-        JSON_EXAMPLES_PATH,
-        'claimant.inspire.json'
-    )) as f:
-        return json.loads(f.read())
-
-
-@pytest.fixture(scope='module')
-def claim_example_cds(app):
-    """Fixture that returns a JSON example of a claim."""
-    with open(os.path.join(
-        app.config['BASE_DIR'],
-        JSON_EXAMPLES_PATH,
-        'claim.cds.1.json'
-    )) as f:
-        return json.loads(f.read())
-
-
-@pytest.fixture(scope='module')
-def claim_example_isnpire_1(app):
-    """Fixture that returns a JSON example of a claim."""
-    with open(os.path.join(
-        app.config['BASE_DIR'],
-        JSON_EXAMPLES_PATH,
-        'claim.inspire.1.json'
-    )) as f:
-        return json.loads(f.read())
-
-
-@pytest.fixture(scope='module')
-def claim_example_isnpire_2(app):
-    """Fixture that returns a JSON example of a claim."""
-    with open(os.path.join(
-        app.config['BASE_DIR'],
-        JSON_EXAMPLES_PATH,
-        'claim.inspire.2.json'
-    )) as f:
-        return json.loads(f.read())
+from .base import ClaimStoreTestCase
 
 
 class RestfulAPITestCase(ClaimStoreTestCase):
@@ -102,44 +44,30 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
         with self.app.app_context():
             self.test_app = TestApp(self.app)
+            create_all_predicates()
 
-    def _populate_for_search(self):
+    def _populate_all(self):
         """Populate database for searching tests."""
         # Adding 2 claimants
-        self.test_app.post_json(
-            '/subscribe',
-            claimant_example_cds(self.app)
-        )
-        self.test_app.post_json(
-            '/subscribe',
-            claimant_example_inspire(self.app)
-        )
+        create_claimant(self.test_app, CLAIMANT_CDS_FN)
+        create_claimant(self.test_app, CLAIMANT_INSPIRE_FN)
         # Adding 3 claims (1 CDS, 2 INSPIRE)
-        self.test_app.post_json(
-            '/claims',
-            claim_example_cds(self.app)
-        )
-        self.test_app.post_json(
-            '/claims',
-            claim_example_isnpire_1(self.app)
-        )
-        self.test_app.post_json(
-            '/claims',
-            claim_example_isnpire_2(self.app)
-        )
+        create_claim(self.test_app, CLAIM_CDS1_FN)
+        create_claim(self.test_app, CLAIM_INSPIRE1_FN)
+        create_claim(self.test_app, CLAIM_INSPIRE2_FN)
 
     def test_submit_claimant(self):
         """Testing `subscribe` api."""
         resp = self.test_app.post_json(
             '/subscribe',
-            claimant_example_cds(self.app)
+            load_claimant(self.app, CLAIMANT_CDS_FN)
         )
         self.assertEqual(resp.status_code, 200)
 
         # Re-adding the same claimant should fail.
         resp = self.test_app.post_json(
             '/subscribe',
-            claimant_example_cds(self.app),
+            load_claimant(self.app, CLAIMANT_CDS_FN),
             expect_errors=True
         )
         self.assertEqual(resp.status_code, 400)
@@ -149,19 +77,16 @@ class RestfulAPITestCase(ClaimStoreTestCase):
         # Firstly we need a claimant, so the claim submission should fail.
         resp = self.test_app.post_json(
             '/claims',
-            claim_example_cds(self.app),
+            load_claim(self.app, CLAIM_CDS1_FN),
             expect_errors=True
         )
         self.assertEqual(resp.status_code, 400)
 
         # Test when there is a claimant.
-        resp = self.test_app.post_json(
-            '/subscribe',
-            claimant_example_cds(self.app)
-        )
+        create_claimant(self.test_app, CLAIMANT_CDS_FN)
         resp = self.test_app.post_json(
             '/claims',
-            claim_example_cds(self.app)
+            load_claim(self.app, CLAIM_CDS1_FN)
         )
         self.assertEqual(resp.status_code, 200)
 
@@ -172,7 +97,7 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
     def test_get_claims_by_claimant(self):
         """Testing GET claims filtering by claimant."""
-        self._populate_for_search()
+        self._populate_all()
         # There are 1 CDS claim and 2 INSPIRE claims
         resp = self.test_app.get('/claims')
         self.assertEqual(len(resp.json), 3)
@@ -183,7 +108,7 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
     def test_get_claims_by_predicate(self):
         """Testing GET claims filtering by predicate."""
-        self._populate_for_search()
+        self._populate_all()
         # There are 2 claims is_same_as and 1 is_cited_by
         resp = self.test_app.get('/claims')
         self.assertEqual(len(resp.json), 3)
@@ -194,7 +119,7 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
     def test_get_claims_by_certainty(self):
         """Testing GET claims filtering by certainty."""
-        self._populate_for_search()
+        self._populate_all()
         # There are 3 claims with: 0.5, 0.8 and 1 as certainty.
         resp = self.test_app.get('/claims?certainty=0.1')
         self.assertEqual(len(resp.json), 3)
@@ -207,7 +132,7 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
     def test_get_claims_by_c(self):
         """Testing GET claims filtering by certainty."""
-        self._populate_for_search()
+        self._populate_all()
         # There are 3 claims with: 0.5, 0.8 and 1 as certainty.
         resp = self.test_app.get('/claims?certainty=0.1')
         self.assertEqual(len(resp.json), 3)
@@ -220,7 +145,7 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
     def test_get_claims_by_human(self):
         """Testing GET claims filtering by human."""
-        self._populate_for_search()
+        self._populate_all()
         # There are 2 human reported claims and 1 by an algorithm.
         resp = self.test_app.get('/claims?human=0')
         self.assertEqual(len(resp.json), 1)
@@ -229,7 +154,7 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
     def test_get_claims_by_actor(self):
         """Testing GET claims filtering by actor."""
-        self._populate_for_search()
+        self._populate_all()
         # There are 2 actors: John Doe (2 times) and CDS_submission (1).
         resp = self.test_app.get('/claims?actor=John%')
         self.assertEqual(len(resp.json), 2)
@@ -238,7 +163,7 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
     def test_get_claims_by_type_value(self):
         """Testing GET claims filtering by type."""
-        self._populate_for_search()
+        self._populate_all()
         # There are 2 CDS_RECORD_ID, one as subject and one as an object.
         resp = self.test_app.get('/claims?type=CDS_RECORD_ID')
         self.assertEqual(len(resp.json), 2)
@@ -251,7 +176,7 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
     def test_get_claims_by_subject_object(self):
         """Testing GET claims filtering by subject/object."""
-        self._populate_for_search()
+        self._populate_all()
         resp = self.test_app.get('/claims?subject=CDS_RECORD_ID')
         self.assertEqual(len(resp.json), 1)
         resp = self.test_app.get('/claims?object=CDS_REPORT_NUMBER')
@@ -263,14 +188,14 @@ class RestfulAPITestCase(ClaimStoreTestCase):
 
     def test_get_identifiers(self):
         """Testing GET identifiers api."""
-        self._populate_for_search()
+        self._populate_all()
         resp = self.test_app.get('/identifiers')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.json), 7)
 
     def test_get_predicates(self):
         """Testing GET predicates api."""
-        self._populate_for_search()
+        self._populate_all()
         resp = self.test_app.get('/predicates')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.json), 7)

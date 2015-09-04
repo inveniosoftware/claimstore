@@ -18,16 +18,18 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Basic run module."""
+"""CLI commands."""
 
-from claimstore.app import create_app
+import click
+from flask_cli import with_appcontext
 
-
-def main():
-    """Create app and run server."""
-    app = create_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+from claimstore.modules.claims.fixtures.predicate import create_all_predicates
 
 
-if __name__ == '__main__':
-    main()
+@click.command()
+@with_appcontext
+def populatedb():
+    """Command without application context."""
+    create_all_predicates()
+
+commands = [populatedb]

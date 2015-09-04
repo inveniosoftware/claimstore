@@ -20,30 +20,58 @@
 
 """Restful resources for the claims module."""
 
+from functools import wraps
+
 import isodate  # noqa
 from flask import Blueprint, request
 from sqlalchemy import or_
 
-from claimstore.app import db
 from claimstore.core.datetime import loc_date_utc
-from claimstore.core.exception import InvalidJSONData, InvalidRequest
+from claimstore.core.exception import InvalidJSONData, InvalidRequest, \
+    RestApiException
 from claimstore.core.json import validate_json
+from claimstore.ext.sqlalchemy import db
 from claimstore.modules.claims.models import Claim, Claimant, IdentifierType, \
     Predicate
 
-from flask_restful import Api, Resource, inputs, reqparse  # isort:skip
+from flask_restful import Api, Resource, abort, inputs, reqparse  # isort:skip
 
 blueprint = Blueprint(
     'claims_restful',
     __name__,
 )
+
 claims_api = Api(blueprint)
+
+
+def error_handler(f):
+    """Decorator to handle restful exceptions.
+
+    If this decorator is not used, Flask-RestFul will always raise a 500 code,
+    independently of your Flask app error handler registration.
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except RestApiException as e:
+            abort(
+                e.status_code,
+                message=e.message,
+                status=e.status_code,
+                extra=e.extra
+            )
+    return inner
+
+
+restful_decorators = [error_handler]
 
 
 class ClaimStoreResource(Resource):
 
     """Base class for REST resources."""
 
+    method_decorators = restful_decorators
     json_schema = None
 
     def validate_json(self, json_data):

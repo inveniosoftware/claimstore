@@ -91,8 +91,15 @@ setup(
     include_package_data=True,
     zip_safe=False,
     platforms='any',
+    entry_points={
+        'console_scripts': [
+            'claimstore = claimstore.cli:cli'
+        ]
+    },
     install_requires=[
         'Flask',
+        'Flask-AppFactory',
+        'Flask-Collect',
         'Flask-RESTful',
         'Flask-SQLAlchemy',
         'isodate',

@@ -27,21 +27,21 @@ class RestApiException(Exception):
 
     status_code = 400
 
-    def __init__(self, message, status_code=None, details=None):
+    def __init__(self, message, status_code=None, extra=None):
         """Initialise the exception.
 
         :param message: Exception message.
         :type message: str.
         :param status_code: HTTP status code. By default it is 400.
         :type status_code: int.
-        :param details: Extra details of the exception.
-        :type details: str.
+        :param extra: Extra details about the exception.
+        :type extra: str.
         """
         Exception.__init__(self)
         self.message = message
         if status_code is not None:
             self.status_code = status_code
-        self.details = details
+        self.extra = extra
 
     def to_dict(self):
         """Return exception as a dictionary."""
@@ -49,8 +49,8 @@ class RestApiException(Exception):
             'status': 'error',
             'message': self.message
         }
-        if self.details:
-            rv['details'] = self.details
+        if self.extra:
+            rv['extra'] = self.extra
         return rv
 
 

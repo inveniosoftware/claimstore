@@ -37,13 +37,15 @@ def get_json_schema(schema):
     :rtype: str.
     """
     module_name, schema_name = schema.split(".")
+
     schema_file_path = os.path.join(
         current_app.config['BASE_DIR'],
         'claimstore',
+        'modules',
+        module_name,
         'static',
         'json',
         'schemas',
-        module_name,
         '{}.json'.format(schema_name)
     )
 

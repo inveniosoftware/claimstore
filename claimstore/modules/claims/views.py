@@ -23,44 +23,49 @@
 from flask import Blueprint, render_template
 
 from claimstore.core.json import get_json_schema
+from claimstore.modules.claims.restful import blueprint as restful_bp
 
-blueprint = Blueprint(
+views_bp = Blueprint(
     'claims_views',
     __name__,
+    template_folder='templates',
+    static_folder='static'
 )
 
+blueprints = [views_bp, restful_bp]
 
-@blueprint.route('/', methods=['GET'])
+
+@views_bp.route('/', methods=['GET'])
 def index():
     """Render the home page for ClaimStore."""
-    return render_template('cover.html', active_menu='home')
+    return render_template('claims/cover.html', active_menu='home')
 
 
-@blueprint.route('/subscription', methods=['GET'])
+@views_bp.route('/subscription', methods=['GET'])
 def subscription():
     """Render the subscription form page."""
     return render_template(
-        "subscription.html",
+        "claims/subscription.html",
         json_schema=get_json_schema('claims.claimant')
     )
 
 
-@blueprint.route('/claimsubmit', methods=['GET'])
+@views_bp.route('/claimsubmit', methods=['GET'])
 def claimsubmit():
     """Render the claim submission form page."""
     return render_template(
-        "claim_submit.html",
+        "claims/claim_submit.html",
         json_schema=get_json_schema('claims.claim')
     )
 
 
-@blueprint.route('/api', methods=['GET'])
+@views_bp.route('/api', methods=['GET'])
 def api():
     """Render the API documenation page."""
-    return render_template("api.html", active_menu='api')
+    return render_template("claims/api.html", active_menu='api')
 
 
-@blueprint.route('/contact', methods=['GET'])
+@views_bp.route('/contact', methods=['GET'])
 def contact():
     """Render the contact page."""
-    return render_template("contact.html", active_menu='contact')
+    return render_template("claims/contact.html", active_menu='contact')

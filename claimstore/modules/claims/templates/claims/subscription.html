@@ -18,12 +18,12 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends 'base.html' %}
+{% extends "claims/base.html" %}
 
 {% block content %}
 
   <div id="submission_form_holder"></div>
-  <button id="submit" class="btn btn-success" type="submit">Submit</button>
+  <button id="submit" class="btn btn-success" type="submit">Subscribe</button>
 
 {% endblock %}
 
@@ -31,7 +31,6 @@
 
   {{ super() }}
 
-  <script src="{{ url_for('static', filename='js/lib/bootstrap3-typeahead.js') }}"></script>
   <script src="{{ url_for('static', filename='js/lib/jsoneditor.js') }}"></script>
 
   <script>
@@ -52,7 +51,7 @@
       if(!errors.length) {
         $.ajax({
           type: 'POST',
-          url: '{{ url_for("claims_restful.claims") }}',
+          url: '{{ url_for("claims_restful.subscribe") }}',
           data: JSON.stringify(editor.getValue()),
           contentType: "application/json; charset=utf-8",
           dataType: "json",
@@ -60,27 +59,13 @@
             alert('Submission successful!');
           },
           error: function(errMsg) {
-            alert(errMsg.responseJSON.message);
+            error = JSON.parse(errMsg.responseText)
+            alert(error.message);
           }
         });
       } else {
         alert('All fields are mandatory. Please, fill them all.');
       }
-    });
-
-    $("input[name^=root\\[][name$=\\]\\[type\\]]").typeahead({
-      source: function(query, process) {
-        jQuery.ajax({
-          url: '{{ url_for("claims_restful.identifiers") }}',
-          type: 'GET',
-          data: {q: query},
-          dataType: 'json',
-          success: function(json){
-            process(json);
-          }
-        });
-      },
-      matcher: function(param) {return true}
     });
 
   </script>

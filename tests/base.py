@@ -22,7 +22,8 @@
 
 from unittest import TestCase
 
-from claimstore.app import create_app, db
+from claimstore.app import create_app
+from claimstore.ext.sqlalchemy import db
 
 
 class ClaimStoreTestCase(TestCase):
@@ -31,7 +32,9 @@ class ClaimStoreTestCase(TestCase):
 
     def setUp(self):
         """Set up."""
-        self.app = create_app(db_create_all=True)
+        self.app = create_app()
+        with self.app.app_context():
+            db.create_all()
 
     def tearDown(self):
         """Tear down."""

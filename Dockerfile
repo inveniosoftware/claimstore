@@ -24,6 +24,8 @@ FROM python:3.4
 # Install some prerequisites ahead of `setup.py` in order to profit
 # from the docker build cache:
 RUN pip install Flask \
+                Flask-AppFactory \
+                Flask-Collect \
                 Flask-RESTful \
                 Flask-SQLAlchemy \
                 isodate \
@@ -45,6 +47,7 @@ ADD . /code
 
 # Install ClaimStore:
 RUN pip install -e .
+RUN claimstore collect
 
 # Run container as user `claimstore` with UID `1000`, which should match
 # current host user in most situations:

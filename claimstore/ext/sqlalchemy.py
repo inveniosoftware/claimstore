@@ -18,16 +18,40 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Basic run module."""
+"""Sqlalchemy setup."""
 
-from claimstore.app import create_app
+import click
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask_cli import with_appcontext
+from flask_registry import ModuleAutoDiscoveryRegistry, RegistryProxy
+
+db = SQLAlchemy()
+
+models = RegistryProxy(
+    'models',  # Registry namespace
+    ModuleAutoDiscoveryRegistry,
+    'models'   # Module name (i.e. models.py)
+)
 
 
-def main():
-    """Create app and run server."""
-    app = create_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+def setup_app(app):
+    """Setup sqlalchemy."""
+    # Add extension CLI to application.
+    app.cli.add_command(initdb)
+    app.cli.add_command(dropalldb)
+    db.init_app(app)
 
 
-if __name__ == '__main__':
-    main()
+@click.command()
+@with_appcontext
+def initdb():
+    """Initialise database."""
+    list(models)  # load all modules
+    db.create_all()
+
+
+@click.command()
+@with_appcontext
+def dropalldb():
+    """Drop database."""
+    db.drop_all()

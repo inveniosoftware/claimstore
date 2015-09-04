@@ -18,7 +18,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends "base.html" %}
+{% extends "claims/base.html" %}
 
 {% block css %}
   {{ super() }}
@@ -63,7 +63,7 @@
             </tr>
             <tr>
               <th scope="row">URL</th>
-              <td>http://localhost:8080/subscribe</td>
+              <td>http://localhost:5000/subscribe</td>
             </tr>
             <tr>
               <th scope="row">Method</th>
@@ -108,11 +108,11 @@
                 <div class="tab-content">
                   <div class="tab-pane active" id="httpie-subscribe">
                     <br />
-                    <pre>http POST http://localhost:8080/subscribe &lt; <a href="{{ url_for('static', filename='json/examples/claimant.cds.json') }}">json/examples/claimant.cds.json</a></pre>
+                    <pre>http POST http://localhost:5000/subscribe &lt; <a href="{{ url_for('static', filename='json/examples/claimant.cds.json') }}">json/examples/claimant.cds.json</a></pre>
                   </div>
                   <div class="tab-pane curl" id="curl-subscribe">
                     <br />
-                    <pre>curl http://localhost:8080/subscribe -H "Content-Type: application/json" -d '{"name":"INSPIRE", "url": "http://inspirehep.net", "persistent_identifiers":[{"type":"INSPIRE_RECORD_ID", "description":"INSPIRE record", "url": "http://inspirehep.net/record/&lt;INSPIRE_RECORD_ID&gt;", "example_value": "123", "example_url":"http://inspirehep.net/record/123"}, {"type": "INSPIRE_AUTHOR_ID", "description": "INSPIRE author", "url": "http://inspirehep.net/author/&lt;INSPIRE_AUTHOR_ID&gt;", "example_value": "J.R. Ellis.1", "example_url": "http://inspirehep.net/author/J.R.Ellis.1"}]}' -X POST -v</pre>
+                    <pre>curl http://localhost:5000/subscribe -H "Content-Type: application/json" -d '{"name":"INSPIRE", "url": "http://inspirehep.net", "persistent_identifiers":[{"type":"INSPIRE_RECORD_ID", "description":"INSPIRE record", "url": "http://inspirehep.net/record/&lt;INSPIRE_RECORD_ID&gt;", "example_value": "123", "example_url":"http://inspirehep.net/record/123"}, {"type": "INSPIRE_AUTHOR_ID", "description": "INSPIRE author", "url": "http://inspirehep.net/author/&lt;INSPIRE_AUTHOR_ID&gt;", "example_value": "J.R. Ellis.1", "example_url": "http://inspirehep.net/author/J.R.Ellis.1"}]}' -X POST -v</pre>
                   </div>
                   <div class="tab-pane" id="python-subscribe">
                     <br />
@@ -120,7 +120,7 @@
 import json
 import requests
 
-url = "http://localhost:8080/subscribe/
+url = "http://localhost:5000/subscribe/
 headers = {"Content-Type": "application/json"}
 with open('$PROJECT_HOME/claimstore/static/json/examples/claimant.cds.json') as f:
     data=json.dumps(f.read())
@@ -154,7 +154,7 @@ r = requests.post(url, data=data, headers=headers)
             </tr>
             <tr>
               <th scope="row">URL</th>
-              <td>http://localhost:8080/claims</td>
+              <td>http://localhost:5000/claims</td>
             </tr>
             <tr>
               <th scope="row">Method</th>
@@ -199,11 +199,11 @@ r = requests.post(url, data=data, headers=headers)
                 <div class="tab-content">
                   <div class="tab-pane active" id="httpie-claim">
                     <br />
-                    <pre>http POST http://localhost:8080/claims &lt; <a href="{{ url_for('static', filename='json/examples/claim.cds.1.json') }}">json/examples/claim.cds.1.json</a></pre>
+                    <pre>http POST http://localhost:5000/claims &lt; <a href="{{ url_for('static', filename='json/examples/claim.cds.1.json') }}">json/examples/claim.cds.1.json</a></pre>
                   </div>
                   <div class="tab-pane curl" id="curl-claim">
                     <br />
-                    <pre>curl http://localhost:8080/claims -H "Content-Type: application/json" -d '{"claimant":"CDS", "object": {"type": "CDS_RECORD_ID", "value": "CMS-PAS-HIG-14-008"}, "claim": {"predicate": "is_same_as", "created": "2015-05-25 11:00:00 UTC", "certainty": 1, "arguments":{"human": 0, "actor": "CDS_submission"}}, "subject": {"type": "CDS_REPORT_NUMBER", "value": "2001192"}}' -X POST -v</pre>
+                    <pre>curl http://localhost:5000/claims -H "Content-Type: application/json" -d '{"claimant":"CDS", "object": {"type": "CDS_RECORD_ID", "value": "CMS-PAS-HIG-14-008"}, "claim": {"predicate": "is_same_as", "created": "2015-05-25 11:00:00 UTC", "certainty": 1, "arguments":{"human": 0, "actor": "CDS_submission"}}, "subject": {"type": "CDS_REPORT_NUMBER", "value": "2001192"}}' -X POST -v</pre>
                   </div>
                   <div class="tab-pane" id="python-claim">
                     <br />
@@ -211,7 +211,7 @@ r = requests.post(url, data=data, headers=headers)
 import json
 import requests
 
-url = "http://localhost:8080/claims/
+url = "http://localhost:5000/claims/
 headers = {"Content-Type": "application/json"}
 with open('$PROJECT_HOME/claimstore/static/json/examples/claim.cds.1.json') as f:
     data=json.dumps(f.read())
@@ -244,7 +244,7 @@ r = requests.post(url, data=data, headers=headers)</pre>
             </tr>
             <tr>
               <th scope="row">URL</th>
-              <td><a href="{{ url_for('claims_restful.claims') }}">http://localhost:8080/claims</a></td>
+              <td><a href="{{ url_for('claims_restful.claims') }}">http://localhost:5000/claims</a></td>
             </tr>
             <tr>
               <th scope="row">URL parameters</th>
@@ -296,17 +296,17 @@ r = requests.post(url, data=data, headers=headers)</pre>
                 <div class="tab-content">
                   <div class="tab-pane active" id="httpie-list-claims">
                     <br />
-                    <pre>http GET http://localhost:8080/claims</pre>
+                    <pre>http GET http://localhost:5000/claims</pre>
                   </div>
                   <div class="tab-pane curl" id="curl-list-claims">
                     <br />
-                    <pre>curl http://localhost:8080/claims</pre>
+                    <pre>curl http://localhost:5000/claims</pre>
                   </div>
                   <div class="tab-pane" id="python-list-claims">
                     <br />
                     <pre>
 import requests
-response = requests.get("http://localhost:8080/claims")
+response = requests.get("http://localhost:5000/claims")
 print response.json()
                     </pre>
                   </div>
@@ -337,7 +337,7 @@ print response.json()
             </tr>
             <tr>
               <th scope="row">URL</th>
-              <td><a href="{{ url_for('claims_restful.identifiers') }}">http://localhost:8080/identifiers</a></td>
+              <td><a href="{{ url_for('claims_restful.identifiers') }}">http://localhost:5000/identifiers</a></td>
             </tr>
             <tr>
               <th scope="row">Method</th>
@@ -369,17 +369,17 @@ print response.json()
                 <div class="tab-content">
                   <div class="tab-pane active" id="httpie-list-identifiers">
                     <br />
-                    <pre>http GET http://localhost:8080/identifiers</pre>
+                    <pre>http GET http://localhost:5000/identifiers</pre>
                   </div>
                   <div class="tab-pane curl" id="curl-list-identifiers">
                     <br />
-                    <pre>curl http://localhost:8080/identifiers</pre>
+                    <pre>curl http://localhost:5000/identifiers</pre>
                   </div>
                   <div class="tab-pane" id="python-list-identifiers">
                     <br />
                     <pre>
 import requests
-response = requests.get("http://localhost:8080/identifiers")
+response = requests.get("http://localhost:5000/identifiers")
 print response.json()
                     </pre>
                   </div>
@@ -410,7 +410,7 @@ print response.json()
             </tr>
             <tr>
               <th scope="row">URL</th>
-              <td><a href="{{ url_for('claims_restful.predicates') }}">http://localhost:8080/predicates</a></td>
+              <td><a href="{{ url_for('claims_restful.predicates') }}">http://localhost:5000/predicates</a></td>
             </tr>
             <tr>
               <th scope="row">Method</th>
@@ -442,17 +442,17 @@ print response.json()
                 <div class="tab-content">
                   <div class="tab-pane active" id="httpie-list-predicates">
                     <br />
-                    <pre>http GET http://localhost:8080/predicates</pre>
+                    <pre>http GET http://localhost:5000/predicates</pre>
                   </div>
                   <div class="tab-pane curl" id="curl-list-predicates">
                     <br />
-                    <pre>curl http://localhost:8080/predicates</pre>
+                    <pre>curl http://localhost:5000/predicates</pre>
                   </div>
                   <div class="tab-pane" id="python-list-predicates">
                     <br />
                     <pre>
 import requests
-response = requests.get("http://localhost:8080/predicates")
+response = requests.get("http://localhost:5000/predicates")
 print response.json()
                     </pre>
                   </div>

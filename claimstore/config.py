@@ -22,15 +22,18 @@
 
 import os
 
-# Statement for enabling the development environment
-DEBUG = True
+EXTENSIONS = [
+    "flask_appfactory.ext.jinja2",
+    "claimstore.ext.sqlalchemy",
+    "claimstore.ext.collect"
+]
 
-# Define the application directory
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+PACKAGES = [
+    "claimstore.modules.claims",
+]
+
+BASE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
 
 # Define the database as environment variable
 if 'SQLALCHEMY_DATABASE_URI' in os.environ:
     SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
-else:
-    raise Exception('Please, define the environment variable \
-        "SQLALCHEMY_DATABASE_URI".')

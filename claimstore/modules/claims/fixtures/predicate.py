@@ -18,16 +18,34 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Basic run module."""
+"""Predicate fixtures."""
 
-from claimstore.app import create_app
+import pytest
 
-
-def main():
-    """Create app and run server."""
-    app = create_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+from claimstore.ext.sqlalchemy import db
+from claimstore.modules.claims.models import Predicate
 
 
-if __name__ == '__main__':
-    main()
+@pytest.fixture
+def create_predicate(pred_name='is_same_as'):
+    """Insert a predicate in the database."""
+    if not Predicate.query.filter_by(name=pred_name).first():
+        predicate = Predicate(name=pred_name)
+        db.session.add(predicate)
+    db.session.commit()
+
+
+@pytest.fixture
+def create_all_predicates():
+    """Populate all predicates."""
+    predicates = [
+        'is_same_as',
+        'is_different_than',
+        'is_erratum_of',
+        'is_superseded_by',
+        'is_cited_by',
+        'is_software_for',
+        'is_dataset_for'
+    ]
+    for pred in predicates:
+        create_predicate(pred)

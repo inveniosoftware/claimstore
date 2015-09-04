@@ -18,16 +18,4 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Basic run module."""
-
-from claimstore.app import create_app
-
-
-def main():
-    """Create app and run server."""
-    app = create_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
-
-if __name__ == '__main__':
-    main()
+"""Claims module fixtures."""
