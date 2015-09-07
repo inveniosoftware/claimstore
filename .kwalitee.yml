@@ -4,5 +4,6 @@ components:
 - docs
 - global
 - installation
+- templates
 - tests
 - travis
