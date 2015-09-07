@@ -4,17 +4,15 @@
     "type": "CDS_RECORD_ID",
     "value": "2001192"
   },
-  "claim": {
-    "predicate": "is_same_as",
-    "created": "2015-03-25T11:00:00Z",
-    "certainty": 1.0,
-    "arguments": {
-      "human": 0,
-      "actor": "CDS_submission"
-    }
-  },
+  "predicate": "is_same_as",
+  "certainty": 1.0,
   "object": {
     "type": "CDS_REPORT_NUMBER",
     "value": "CMS-PAS-HIG-14-008"
-  }
+  },
+  "arguments": {
+    "human": 0,
+    "actor": "CDS_submission"
+  },
+  "created": "2015-03-25T11:00:00Z"
 }

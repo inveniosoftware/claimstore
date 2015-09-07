@@ -4,18 +4,16 @@
     "type": "ARXIV_ID",
     "value": "cond-mat/9906097"
   },
-  "claim": {
-    "predicate": "is_same_as",
-    "created": "2015-04-25T11:00:00Z",
-    "certainty": 0.8,
-    "arguments": {
-      "human": 1,
-      "actor": "John Doe",
-      "role": "cataloguer"
-    }
-  },
+  "predicate": "is_same_as",
+  "certainty": 0.8,
   "object": {
     "type": "DOI",
     "value": "C10.1103/PhysRevE.62.7422"
-  }
+  },
+  "arguments": {
+    "human": 1,
+    "actor": "John Doe",
+    "role": "cataloguer"
+  },
+  "created": "2015-04-25T11:00:00Z"
 }

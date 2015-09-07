@@ -4,18 +4,16 @@
     "type": "INSPIRE_RECORD_ID",
     "value": "cond-mat/9906097"
   },
-  "claim": {
-    "predicate": "is_variant_of",
-    "created": "2015-05-25T11:00:00Z",
-    "certainty": 0.5,
-    "arguments": {
-      "human": 1,
-      "actor": "John Doe",
-      "role": "cataloguer"
-    }
-  },
+  "predicate": "is_variant_of",
+  "certainty": 0.5,
   "object": {
     "type": "CDS_RECORD_ID",
     "value": "2003192"
-  }
+  },
+  "arguments": {
+    "human": 1,
+    "actor": "John Doe",
+    "role": "cataloguer"
+  },
+  "created": "2015-05-25T11:00:00Z"
 }

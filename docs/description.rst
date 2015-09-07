@@ -122,15 +122,13 @@ bibcode ``2005astro.ph..1001H``::
           "type": "ARXIV_ID",
           "value": "astro-ph/0501001"
        },
-      "claim": {
-          "predicate": "is_same_as",
-          "created": "2015-05-26T11:00:00Z",
-          "certainty": 1,
-      },
+      "predicate": "is_same_as",
+      "certainty": 1,
       "object": {
-           "type": "ADS_BIBCODE",
-           "value": "2005astro.ph..1001H"
-      }
+          "type": "ADS_BIBCODE",
+          "value": "2005astro.ph..1001H"
+      },
+      "created": "2015-05-26T11:00:00Z"
     }
 
 Each individual claim can optionally include a free set of additional
@@ -149,20 +147,17 @@ by a trusted program::
           "type": "ARXIV_ID",
           "value": "astro-ph/0501001"
        },
-      "claim": {
-          "predicate": "is_same_as",
-          "created": "2015-05-26T11:00:00Z",
-          "certainty": 0.9,
-          "arguments": {
-             "human": 0,
-             "actor": "ADS_record_generator"
-          }
-
-      },
+      "predicate": "is_same_as",
+      "certainty": 0.9,
       "object": {
-           "type": "ADS_BIBCODE",
-           "value": "2005astro.ph..1001H"
-      }
+          "type": "ADS_BIBCODE",
+          "value": "2005astro.ph..1001H"
+      },
+      "arguments": {
+          "human": 0,
+          "actor": "ADS_record_generator"
+      },
+      "created": "2015-05-26T11:00:00Z"
     }
 
 A service would usually claim something about the objects it manages.
@@ -175,19 +170,17 @@ persistent CDS record ID 2001192::
           "type": "CDS_REPORT_NUMBER",
           "value": "CMS-PAS-HIG-14-008"
        },
-      "claim": {
-          "predicate": "is_same_as",
-          "created": "2015-05-26T11:00:00Z",
-          "certainty": 1,
-          "arguments": {
-              "human": 0,
-              "actor": "CDS_submission"
-           }
-      },
+      "predicate": "is_same_as",
+      "certainty": 1,
       "object": {
-           "type": "CDS_RECORD_ID",
-           "value": "2001192"
-      }
+          "type": "CDS_RECORD_ID",
+          "value": "2001192"
+      },
+      "arguments": {
+          "human": 0,
+          "actor": "CDS_submission"
+      },
+      "created": "2015-05-26T11:00:00Z"
     }
 
 A service can claim statements about holdings of other services in the
@@ -202,20 +195,18 @@ an apprentice cataloguer::
           "type": "ARXIV_ID",
           "value": "cond-mat/9906097"
        },
-      "claim": {
-          "predicate": "is_same_as",
-          "created": "2015-05-26T11:00:00Z",
-          "certainty": 0.8,
-          "arguments": {
-              "human": 1,
-              "actor": "John Doe",
-              "role": "cataloguer"
-           }
-      },
+      "predicate": "is_same_as",
+      "certainty": 0.8,
       "object": {
-           "type": "DOI",
-           "value": "10.1103/PhysRevE.62.7422"
-      }
+          "type": "DOI",
+          "value": "10.1103/PhysRevE.62.7422"
+      },
+      "arguments": {
+          "human": 1,
+          "actor": "John Doe",
+          "role": "cataloguer"
+      },
+      "created": "2015-05-26T11:00:00Z"
     }
 
 Using claims
@@ -241,20 +232,19 @@ in chronological order, for example::
           "type": "ARXIV_ID",
           "value": "cond-mat/9906097"
        },
-      "claim": {
-          "predicate": "is_same_as",
-          "created": "2015-05-26T11:00:00Z",
-          "certainty": 0.8,
-          "arguments": {
-              "human": 1,
-              "actor": "John Doe",
-              "role": "cataloguer"
-           }
-      },
+      "predicate": "is_same_as",
+      "certainty": 0.8,
       "object": {
-           "type": "DOI",
-           "value": "10.1103/PhysRevE.62.7422"
-      }
+          "type": "DOI",
+          "value": "10.1103/PhysRevE.62.7422"
+      },
+      "arguments": {
+          "human": 1,
+          "actor": "John Doe",
+          "role": "cataloguer"
+      },
+      "created": "2015-05-26T11:00:00Z",
+      "recieved": "2015-05-26T11:00:00Z"
     },
     {
       "claimant": "ARXIV",
@@ -262,20 +252,19 @@ in chronological order, for example::
           "type": "ARXIV_ID",
           "value": "cond-mat/9906097"
        },
-      "claim": {
-          "predicate": "is_same_as",
-          "created": "2015-05-26T11:00:00Z",
-          "certainty": 1.0,
-          "arguments": {
-              "human": 1,
-              "actor": "John Doe",
-              "role": "author"
-           }
-      },
+      "predicate": "is_same_as",
+      "certainty": 1.0,
       "object": {
-           "type": "DOI",
-           "value": "10.1103/PhysRevE.62.7422"
-      }
+          "type": "DOI",
+          "value": "10.1103/PhysRevE.62.7422"
+      },
+      "arguments": {
+          "human": 1,
+          "actor": "John Doe",
+          "role": "author"
+      },
+      "created": "2015-05-26T11:00:00Z",
+      "recieved": "2015-05-26T11:00:00Z"
     },
   ]
 

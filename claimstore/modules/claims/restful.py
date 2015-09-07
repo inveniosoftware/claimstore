@@ -228,7 +228,7 @@ class ClaimsResource(ClaimStoreResource):
         self.validate_json(json_data)
 
         try:
-            created_dt = isodate.parse_datetime(json_data['claim']['created'])
+            created_dt = isodate.parse_datetime(json_data['created'])
         except isodate.ISO8601Error as e:
             raise InvalidJSONData(
                 'Claim `created` datetime does not follow ISO 8601 Z',
@@ -256,12 +256,12 @@ class ClaimsResource(ClaimStoreResource):
                 identifier type')
 
         predicate = Predicate.query.filter_by(
-            name=json_data['claim']['predicate']
+            name=json_data['predicate']
         ).first()
         if not predicate:
             raise InvalidRequest('Predicate not registered')
 
-        arguments = json_data['claim'].get('arguments', {})
+        arguments = json_data.get('arguments', {})
         new_claim = Claim(
             created=created_dt,
             claimant=claimant,
@@ -270,7 +270,7 @@ class ClaimsResource(ClaimStoreResource):
             predicate_id=predicate.id,
             object_type_id=object_type.id,
             object_value=json_data['object']['value'],
-            certainty=json_data['claim']['certainty'],
+            certainty=json_data['certainty'],
             human=arguments.get('human', None),
             actor=arguments.get('actor', None),
             role=arguments.get('role', None),
@@ -384,10 +384,12 @@ class ClaimsResource(ClaimStoreResource):
                                 Claim.object_value.like(args.value))
                         )
 
-        return [{
-            'received': c.received.isoformat(),
-            'claim_details': c.claim_details
-        } for c in claims]
+        output = []
+        for c in claims:
+            item = c.claim_details
+            item['recieved'] = c.received.isoformat()
+            output.append(item)
+        return output
 
 
 class IdentifierResource(ClaimStoreResource):

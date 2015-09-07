@@ -31,57 +31,19 @@
       "required": ["type", "value"],
       "additionalProperties": false
     },
-    "claim": {
-      "title": "Claim predicate",
-      "description": "Type of the claim",
-      "type": "object",
-      "properties": {
-        "predicate": {
-          "title": "Predicate",
-          "description": "Type of relation between the subject and the object",
-          "type": "string",
-          "enum": ["is_same_as", "is_variant_of", "is_author_of", "is_contributor_to", "is_erratum_of"]
-        },
-        "created": {
-          "title": "Creation datetime",
-          "description": "Datetime in which the claim was created",
-          "type": "string",
-          "format": "date-time",
-          "minLength": 1
-        },
-        "certainty": {
-          "title": "Certainty",
-          "description": "Certainty of the claim. It must be a value between 0 and 1.0, being 1.0 a confident claim",
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1,
-          "minLength": 1
-        },
-        "arguments": {
-          "title": "Optional arguments",
-          "description": "Arguments supporting the certainty of the claim",
-          "type": "object",
-          "properties": {
-            "human": {
-              "title": "Human made",
-              "description": "The claim was done by a human (1) or an algorithm (1)",
-              "type": "number",
-              "enum": [0, 1]
-            },
-            "actor": {
-              "title": "Actor",
-              "description": "Person who assessed the certainty",
-              "type": "string"
-            },
-            "role": {
-              "title": "Role",
-              "description": "Role of the actor (e.g. Cataloguer)",
-              "type": "string"
-            }
-          }
-        }
-      },
-      "required": ["predicate", "certainty"]
+    "predicate": {
+      "title": "Predicate",
+      "description": "Type of relation between the subject and the object",
+      "type": "string",
+      "enum": ["is_same_as", "is_variant_of", "is_author_of", "is_contributor_to", "is_erratum_of"]
+    },
+    "certainty": {
+      "title": "Certainty",
+      "description": "Certainty of the claim. It must be a value between 0 and 1.0, being 1.0 a confident claim",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "minLength": 1
     },
     "object": {
       "title": "Object",
@@ -103,8 +65,38 @@
       },
       "required": ["type", "value"],
       "additionalProperties": false
+    },
+    "created": {
+      "title": "Creation datetime",
+      "description": "Datetime in which the claim was created",
+      "type": "string",
+      "format": "date-time",
+      "minLength": 1
+    },
+    "arguments": {
+      "title": "Optional arguments",
+      "description": "Arguments supporting the certainty of the claim",
+      "type": "object",
+      "properties": {
+        "human": {
+          "title": "Human made",
+          "description": "The claim was done by a human (1) or an algorithm (1)",
+          "type": "number",
+          "enum": [0, 1]
+        },
+        "actor": {
+          "title": "Actor",
+          "description": "Person who assessed the certainty",
+          "type": "string"
+        },
+        "role": {
+          "title": "Role",
+          "description": "Role of the actor (e.g. Cataloguer)",
+          "type": "string"
+        }
+      }
     }
   },
-  "required": ["claimant", "subject", "claim", "object"],
+  "required": ["claimant", "subject", "predicate", "object", "certainty", "created"],
   "additionalProperties": false
 }
