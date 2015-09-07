@@ -40,12 +40,10 @@ def create_all_predicates():
     """Populate all predicates."""
     predicates = [
         'is_same_as',
-        'is_different_than',
-        'is_erratum_of',
-        'is_superseded_by',
-        'is_cited_by',
-        'is_software_for',
-        'is_dataset_for'
+        'is_variant_of',
+        'is_author_of',
+        'is_contributor_to',
+        'is_erratum_of'
     ]
     for pred in predicates:
         create_predicate(pred)

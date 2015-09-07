@@ -5,7 +5,7 @@
     "value": "cond-mat/9906097"
   },
   "claim": {
-    "predicate": "is_cited_by",
+    "predicate": "is_variant_of",
     "created": "2015-05-25T11:00:00Z",
     "certainty": 0.5,
     "arguments": {

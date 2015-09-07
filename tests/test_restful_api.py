@@ -109,12 +109,12 @@ class RestfulAPITestCase(ClaimStoreTestCase):
     def test_get_claims_by_predicate(self):
         """Testing GET claims filtering by predicate."""
         self._populate_all()
-        # There are 2 claims is_same_as and 1 is_cited_by
+        # There are 2 claims is_same_as and 1 is_variant_of
         resp = self.test_app.get('/claims')
         self.assertEqual(len(resp.json), 3)
         resp = self.test_app.get('/claims?predicate=is_same_as')
         self.assertEqual(len(resp.json), 2)
-        resp = self.test_app.get('/claims?predicate=is_cited_by')
+        resp = self.test_app.get('/claims?predicate=is_variant_of')
         self.assertEqual(len(resp.json), 1)
 
     def test_get_claims_by_certainty(self):
@@ -198,4 +198,4 @@ class RestfulAPITestCase(ClaimStoreTestCase):
         self._populate_all()
         resp = self.test_app.get('/predicates')
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(len(resp.json), 7)
+        self.assertEqual(len(resp.json), 5)

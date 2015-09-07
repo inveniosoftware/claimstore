@@ -40,7 +40,7 @@
           "title": "Predicate",
           "description": "Type of relation between the subject and the object",
           "type": "string",
-          "enum": ["is_same_as", "is_different_than", "is_erratum_of", "is_superseded_by", "is_cited_by", "is_software_for", "is_dataset_for"]
+          "enum": ["is_same_as", "is_variant_of", "is_author_of", "is_contributor_to", "is_erratum_of"]
         },
         "created": {
           "title": "Creation datetime",
