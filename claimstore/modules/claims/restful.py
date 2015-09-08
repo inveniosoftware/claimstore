@@ -85,7 +85,7 @@ class ClaimStoreResource(Resource):
         try:
             validate_json(json_data, self.json_schema)
         except Exception as e:
-            raise InvalidJSONData('JSON data is not valid', details=str(e))
+            raise InvalidJSONData('JSON data is not valid', extra=str(e))
 
 
 class Subscription(ClaimStoreResource):
@@ -232,7 +232,7 @@ class ClaimsResource(ClaimStoreResource):
         except isodate.ISO8601Error as e:
             raise InvalidJSONData(
                 'Claim `created` datetime does not follow ISO 8601 Z',
-                details=str(e)
+                extra=str(e)
             )
 
         claimant = Claimant.query.filter_by(name=json_data['claimant']).first()
