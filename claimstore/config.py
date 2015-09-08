@@ -37,3 +37,11 @@ BASE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
 # Define the database as environment variable
 if 'SQLALCHEMY_DATABASE_URI' in os.environ:
     SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
+
+# Define the IPs that can use the RESTful API. The list of IPs should be
+# separated by whitespaces.
+if 'CLAIMSTORE_ALLOWED_IPS' in os.environ and \
+        os.environ['CLAIMSTORE_ALLOWED_IPS'].strip():
+    CLAIMSTORE_ALLOWED_IPS = os.environ['CLAIMSTORE_ALLOWED_IPS']
+else:
+    CLAIMSTORE_ALLOWED_IPS = '127.0.0.1'

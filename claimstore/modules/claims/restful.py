@@ -26,7 +26,7 @@ isort:skip_file
 from functools import wraps
 
 import isodate  # noqa
-from flask import Blueprint, request
+from flask import Blueprint, current_app, request
 from flask_restful import Api, Resource, abort, inputs, reqparse
 from sqlalchemy import or_
 
@@ -66,7 +66,27 @@ def error_handler(f):
     return inner
 
 
-restful_decorators = [error_handler]
+def check_ip(f):
+    """Decorator to control the access to the API.
+
+    If the client's IP matches the list of IPs defined in the environment
+    variable `CLAIMSTORE_ALLOWED_IPS`, then the access will be granted.
+    Otherwise, an access denied code 403 will be raised.
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        if request.remote_addr in current_app.config['CLAIMSTORE_ALLOWED_IPS']:
+            return f(*args, **kwargs)
+        else:
+            abort(
+                403,
+                message="Access denied",
+                status=403
+            )
+    return inner
+
+
+restful_decorators = [error_handler, check_ip]
 
 
 class ClaimStoreResource(Resource):

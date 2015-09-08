@@ -43,7 +43,10 @@ class RestfulAPITestCase(ClaimStoreTestCase):
         super(RestfulAPITestCase, self).setUp()
 
         with self.app.app_context():
-            self.test_app = TestApp(self.app)
+            self.test_app = TestApp(
+                self.app,
+                extra_environ=dict(REMOTE_ADDR='127.0.0.1')
+            )
             create_all_predicates()
 
     def _populate_all(self):
