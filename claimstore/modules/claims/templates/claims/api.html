@@ -76,7 +76,7 @@
             <tr>
               <th scope="row">Data parameters</th>
               <td>
-                <p>JSON with the information of the claimant. The JSON data should be valid according to the <a href="{{ url_for('static', filename='json/schemas/claims/claimant.json') }}">JSON Schema for claimants</a>.</p>
+                <p>JSON with the information of the claimant. The JSON data should be valid according to the <a href="{{ url_for('static', filename='json/schemas/claimant.json') }}">JSON Schema for claimants</a>.</p>
               </td>
             </tr>
             <tr>
@@ -167,7 +167,7 @@ r = requests.post(url, data=data, headers=headers)
             <tr>
               <th scope="row">Data parameters</th>
               <td>
-                <p>JSON with the information of the claim. The JSON data should be valid according to the <a href="{{ url_for('static', filename='json/schemas/claims/claim.json') }}">JSON Schema for claims</a>.</p>
+                <p>JSON with the information of the claim. The JSON data should be valid according to the <a href="{{ url_for('static', filename='json/schemas/claim.json') }}">JSON Schema for claims</a>.</p>
               </td>
             </tr>
             <tr>
@@ -199,7 +199,7 @@ r = requests.post(url, data=data, headers=headers)
                 <div class="tab-content">
                   <div class="tab-pane active" id="httpie-claim">
                     <br />
-                    <pre>http POST http://localhost:5000/claims &lt; <a href="{{ url_for('static', filename='json/examples/claim.cds.1.json') }}">json/examples/claim.cds.1.json</a></pre>
+                    <pre>http POST http://localhost:5000/claims &lt; <a href="{{ url_for('static', filename='json/examples/claim.cds.json') }}">json/examples/claim.cds.json</a></pre>
                   </div>
                   <div class="tab-pane curl" id="curl-claim">
                     <br />

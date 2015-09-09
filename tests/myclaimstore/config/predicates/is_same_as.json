@@ -1,0 +1,4 @@
+{
+  "name": "is_same_as",
+  "description": "used when there is a 100% equivalence, e.g. a local copy of an arXiv record, with either the same or enriched metadata, e.g. ORCID corresponds to this INSPIRE ID"
+}

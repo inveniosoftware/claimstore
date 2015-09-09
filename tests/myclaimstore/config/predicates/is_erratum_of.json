@@ -1,0 +1,4 @@
+{
+  "name": "is_erratum_of",
+  "description": "e.g. if INSPIRE record R1 is variant of DOI1, and DOI2 is erratum of DOI1, but INSPIRE merges all these in the same record, then there would be three claims: R1 is variant of DOI1, DOI2 is erratum of DOI1, R1 is variant of DOI2"
+}

@@ -20,34 +20,69 @@
 
 """Claimant fixtures."""
 
+import glob
 import json
 import os
 
 import pytest
+from flask import current_app
 
-CLAIMANT_CDS_FN = 'claimant.cds.json'
-CLAIMANT_INSPIRE_FN = 'claimant.inspire.json'
-
-
-@pytest.fixture
-def load_claimant(app, json_filename=CLAIMANT_CDS_FN):
-    """Fixture that returns the JSON data representing a claimant."""
-    with open(os.path.join(
-        app.config['BASE_DIR'],
-        'claimstore',
-        'modules',
-        'claims',
-        'static',
-        'json',
-        'examples',
-        json_filename
-    )) as f:
-        return json.loads(f.read())
+from claimstore.ext.sqlalchemy import db
+from claimstore.modules.claims.models import Claimant
 
 
 @pytest.fixture
-def create_claimant(test_app, json_filename=CLAIMANT_CDS_FN):
-    """Fixture that creates a claimant."""
-    test_app.post_json(
-        '/subscribe',
-        load_claimant(test_app.app, json_filename))
+def create_claimant(claimant_json):
+    """Insert a claimant in the database."""
+    if not Claimant.query.filter_by(name=claimant_json['name']).first():
+        claimant = Claimant(**claimant_json)
+        db.session.add(claimant)
+    db.session.commit()
+
+
+@pytest.fixture
+def load_all_claimants(config_path=None):
+    """Fixture that loads all test claimants."""
+    if config_path:
+        claimants_filepath = os.path.join(
+            config_path,
+            'claimants'
+        )
+    else:
+        claimants_filepath = os.path.join(
+            current_app.config['BASE_DIR'],
+            'tests',
+            'myclaimstore',
+            'config',
+            'claimants'
+        )
+    for claimant_fp in glob.glob("{}/*.json".format(claimants_filepath)):
+        with open(claimant_fp) as f:
+            create_claimant(json.loads(f.read()))
+
+
+@pytest.fixture
+def dummy_claimant():
+    """Fixture that creates a dummy claimant."""
+    return json.loads("""
+        {
+            "name": "dummy_claimant",
+            "url": "http://dummy.net",
+            "persistent_identifiers": [
+              {
+                "type": "CDS_RECORD_ID",
+                "description": "CDS record",
+                "url": "http://cds.cern.ch/record/<CDS_RECORD_ID>",
+                "example_value": "123",
+                "example_url": "http://cds.cern.ch/record/123"
+              },
+              {
+                "type": "CDS_REPORT_NUMBER",
+                "description": "CDS report number",
+                "url": "http://cds.cern.ch/report/<CDS_REPORT_NUMBER>",
+                "example_value": "CMS-PAS-HIG-14-008",
+                "example_url": "http://cds.cern.ch/report/CMS-PAS-HIG-14-008"
+              }
+            ]
+        }
+        """)

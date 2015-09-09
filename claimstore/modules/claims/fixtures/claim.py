@@ -20,36 +20,65 @@
 
 """Claim fixtures."""
 
+import glob
 import json
 import os
 
 import pytest
-
-CLAIM_CDS1_FN = 'claim.cds.1.json'
-CLAIM_INSPIRE1_FN = 'claim.inspire.1.json'
-CLAIM_INSPIRE2_FN = 'claim.inspire.2.json'
+from flask import current_app
+from webtest import TestApp
 
 
 @pytest.fixture
-def load_claim(app, json_filename=CLAIM_CDS1_FN):
-    """Fixture that returns the JSON data representing a claim."""
-    with open(os.path.join(
-        app.config['BASE_DIR'],
-        'claimstore',
-        'modules',
-        'claims',
-        'static',
-        'json',
-        'examples',
-        json_filename
-    )) as f:
-        return json.loads(f.read())
+def load_all_claims(test_app=None, config_path=None):
+    """Fixture that loads all test claims."""
+    if test_app is None:
+        with current_app.app_context():
+            test_app = TestApp(
+                current_app,
+                extra_environ=dict(REMOTE_ADDR='127.0.0.1')
+            )
+
+    if config_path:
+        claims_filepath = os.path.join(
+            config_path,
+            'claims'
+        )
+    else:
+        claims_filepath = os.path.join(
+            test_app.app.config['BASE_DIR'],
+            'tests',
+            'myclaimstore',
+            'data',
+            'claims'
+        )
+    for claim_fp in glob.glob("{}/*.json".format(claims_filepath)):
+        with open(claim_fp) as f:
+            test_app.post_json(
+                '/claims',
+                json.loads(f.read()))
 
 
 @pytest.fixture
-def create_claim(test_app, json_filename=CLAIM_CDS1_FN):
-    """Fixture that creates a claim."""
-    test_app.post_json(
-        '/claims',
-        load_claim(test_app.app, json_filename)
-    )
+def dummy_claim():
+    """Fixture that creates a dummy claim."""
+    return json.loads("""
+        {
+          "claimant": "dummy_claimant",
+          "subject": {
+            "type": "CDS_RECORD_ID",
+            "value": "2001192"
+          },
+          "predicate": "is_same_as",
+          "certainty": 1.0,
+          "object": {
+            "type": "CDS_REPORT_NUMBER",
+            "value": "CMS-PAS-HIG-14-008"
+          },
+          "arguments": {
+            "human": 0,
+            "actor": "CDS_submission"
+          },
+          "created": "2015-03-25T11:00:00Z"
+        }
+        """)

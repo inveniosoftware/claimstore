@@ -1,0 +1,7 @@
+{
+  "type": "CDS_REPORT_NUMBER",
+  "description": "CDS report number",
+  "url": "http://cds.cern.ch/report/<CDS_REPORT_NUMBER>",
+  "example_value": "CMS-PAS-HIG-14-008",
+  "example_url": "http://cds.cern.ch/report/CMS-PAS-HIG-14-008"
+}

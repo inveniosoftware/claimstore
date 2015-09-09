@@ -258,6 +258,11 @@ class Predicate(db.Model):
     )
     """Unique name of a predicate."""
 
+    description = db.Column(
+        db.String
+    )
+    """Description of the predicate."""
+
     claim = db.relationship(
         'Claim',
         backref='predicate',

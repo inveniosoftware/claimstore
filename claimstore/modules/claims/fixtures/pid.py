@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Predicate fixtures."""
+"""Persistent identifiers fixtures."""
 
 import glob
 import json
@@ -28,34 +28,35 @@ import pytest
 from flask import current_app
 
 from claimstore.ext.sqlalchemy import db
-from claimstore.modules.claims.models import Predicate
+from claimstore.modules.claims.models import IdentifierType
 
 
 @pytest.fixture
-def create_predicate(pred_json):
-    """Insert a predicate in the database."""
-    if not Predicate.query.filter_by(name=pred_json['name']).first():
-        predicate = Predicate(**pred_json)
-        db.session.add(predicate)
+def create_pid(pid_json):
+    """Insert an identifier in the database."""
+    pid_json['name'] = pid_json.pop('type')
+    if not IdentifierType.query.filter_by(name=pid_json['name']).first():
+        identifier = IdentifierType(**pid_json)
+        db.session.add(identifier)
     db.session.commit()
 
 
 @pytest.fixture
-def load_all_predicates(config_path=None):
-    """Populate all predicates."""
+def load_all_pids(config_path=None):
+    """Populate all persistent identifiers."""
     if config_path:
-        predicates_filepath = os.path.join(
+        pids_filepath = os.path.join(
             config_path,
-            'predicates'
+            'pids'
         )
     else:
-        predicates_filepath = os.path.join(
+        pids_filepath = os.path.join(
             current_app.config['BASE_DIR'],
             'tests',
             'myclaimstore',
             'config',
-            'predicates'
+            'pids'
         )
-    for predicate_fp in glob.glob("{}/*.json".format(predicates_filepath)):
-        with open(predicate_fp) as f:
-            create_predicate(json.loads(f.read()))
+    for pid_fp in glob.glob("{}/*.json".format(pids_filepath)):
+        with open(pid_fp) as f:
+            create_pid(json.loads(f.read()))

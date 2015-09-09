@@ -1,0 +1,7 @@
+{
+  "type": "CDS_AUTHOR_ID",
+  "description": "CDS author",
+  "url": "http://cds.cern.ch/author/<CDS_AUTHOR_ID>",
+  "example_value": "J.R. Ellis.1",
+  "example_url": "http://cds.cern.ch/author/J.R.Ellis.1"
+}

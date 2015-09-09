@@ -22,6 +22,7 @@
 
 import json
 import os
+import pathlib
 
 import jsonschema  # noqa (pytest-isort is happy, flake8 not here)
 from flask import current_app
@@ -66,6 +67,24 @@ def validate_json(json_input, schema):
     """
     if schema:
         schema_content = get_json_schema(schema)
-        jsonschema.validate(json_input, json.loads(schema_content))
+        module_name, schema_name = schema.split('.')
+        resolver = jsonschema.RefResolver('{}/'.format(
+            pathlib.Path(
+                os.path.join(
+                    current_app.config['BASE_DIR'],
+                    'claimstore',
+                    'modules',
+                    module_name,
+                    'static',
+                    'json',
+                    'schemas'
+                )
+            ).as_uri()),
+            schema_content
+        )
+        jsonschema.Draft4Validator(
+            json.loads(schema_content),
+            resolver=resolver
+        ).validate(json_input)
         return True
     return False

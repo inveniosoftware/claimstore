@@ -133,21 +133,22 @@ class Subscription(ClaimStoreResource):
             )
             db.session.add(new_claimant)
 
-            for persistent_id in json_data['persistent_identifiers']:
-                all_caps_pers_id = persistent_id['type'].upper()
-                existing_persistent_id = IdentifierType.query.filter_by(
-                    name=all_caps_pers_id
-                ).first()
-                if not existing_persistent_id:
-                    new_persistent_id = IdentifierType(
-                        name=all_caps_pers_id,
-                        description=persistent_id['description'],
-                        url=persistent_id['url'],
-                        example_value=persistent_id['example_value'],
-                        example_url=persistent_id['example_url'],
-                        claimant_id=new_claimant.id
-                    )
-                    db.session.add(new_persistent_id)
+            if 'persistent_identifiers' in json_data:
+                for persistent_id in json_data['persistent_identifiers']:
+                    all_caps_pers_id = persistent_id['type'].upper()
+                    existing_persistent_id = IdentifierType.query.filter_by(
+                        name=all_caps_pers_id
+                    ).first()
+                    if not existing_persistent_id:
+                        new_persistent_id = IdentifierType(
+                            name=all_caps_pers_id,
+                            description=persistent_id['description'],
+                            url=persistent_id['url'],
+                            example_value=persistent_id['example_value'],
+                            example_url=persistent_id['example_url'],
+                            claimant_id=new_claimant.id
+                        )
+                        db.session.add(new_persistent_id)
             db.session.commit()
             return {'status': 'success', 'uuid': new_claimant.uuid}
         else:

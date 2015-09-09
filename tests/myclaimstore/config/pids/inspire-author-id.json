@@ -1,0 +1,7 @@
+{
+  "type": "INSPIRE_AUTHOR_ID",
+  "description": "INSPIRE author",
+  "url": "http://inspirehep.net/author/<INSPIRE_AUTHOR_ID>",
+  "example_value": "J.R. Ellis.1",
+  "example_url": "http://inspirehep.net/author/J.R.Ellis.1"
+}

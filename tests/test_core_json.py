@@ -34,8 +34,8 @@ class FlaskTestCase(ClaimStoreTestCase):
         with self.app.app_context():
             assert '"title": "Service Name",' in \
                 get_json_schema('claims.claimant')
-            assert 'URL showing the identifier placeholder' in \
+            assert 'HTTP URL addressing the service home page' in \
                 get_json_schema('claims.claimant')
             assert '"required": ["type", "description", "url", ' + \
                 '"example_value", "example_url"],' in \
-                get_json_schema('claims.claimant')
+                get_json_schema('claims.persistent_id')

@@ -20,16 +20,86 @@
 
 """CLI commands."""
 
+from pathlib import Path
+
 import click
 from flask_cli import with_appcontext
 
-from claimstore.modules.claims.fixtures.predicate import create_all_predicates
+from claimstore.ext.sqlalchemy import db
+from claimstore.modules.claims.fixtures.claim import load_all_claims
+from claimstore.modules.claims.fixtures.claimant import load_all_claimants
+from claimstore.modules.claims.fixtures.pid import load_all_pids
+from claimstore.modules.claims.fixtures.predicate import load_all_predicates
 
 
 @click.command()
+@click.option('--config', help='Path to a folder with the db configuration')
 @with_appcontext
-def populatedb():
-    """Command without application context."""
-    create_all_predicates()
+def initdb(config):
+    """Create database and populate it with basic data.
 
-commands = [populatedb]
+    The database will be populated with the predicates, persistent identifiers
+    and claimants that are defined in `tests/myclaimstore/config`. An
+    alternative directory can be specified thanks to the argument `--config`.
+    """
+    if config:
+        path = Path(config)
+        if not path.exists():
+            raise click.BadParameter(
+                'The specified config path does not exist.'
+            )
+        elif not path.is_dir():
+            raise click.BadParameter(
+                'The specified config path is not a directory.'
+            )
+        else:
+            dirs = set(str(x.name) for x in path.iterdir() if x.is_dir())
+            if not set(['predicates', 'pids', 'claimants']).issubset(dirs):
+                raise click.BadParameter(
+                    'The specified directory must contain three folders: '
+                    'predicates, pids and claimants.'
+                )
+    db.create_all()
+    load_all_predicates(config)
+    load_all_pids(config)
+    load_all_claimants(config)
+    click.echo('Database successfully initialised.')
+
+
+@click.command()
+@click.option('--data', help='Path to a folder with data (claims)')
+@with_appcontext
+def populatedb(data):
+    """Populate database with claims.
+
+    The database will be populated with the claims that are defined in
+    `tests/myclaimstore/data`. An alternative directory can be specified
+    thanks to the argument `--data`.
+    """
+    if data:
+        path = Path(data)
+        if not path.exists():
+            raise click.BadParameter(
+                'The specified data path does not exist.'
+            )
+        elif not path.is_dir():
+            raise click.BadParameter(
+                'The specified data path is not a directory.'
+            )
+        else:
+            dirs = [str(x.name) for x in path.iterdir() if x.is_dir()]
+            if 'claims' not in dirs:
+                raise click.BadParameter(
+                    'The specified directory must contain one folder named:'
+                    'claims.'
+                )
+    try:
+        load_all_claims(config_path=data)
+        click.echo('Database successfully populated.')
+    except Exception:
+        click.echo(
+            'Claims could not be loaded. Try `claimstore initdb` first.'
+        )
+
+
+commands = [initdb, populatedb]

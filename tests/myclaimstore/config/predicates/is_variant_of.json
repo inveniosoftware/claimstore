@@ -1,0 +1,4 @@
+{
+  "name": "is_variant_of",
+  "description": "lesser claim, e.g. arXiv preprint and DOI of a published paper, e.g. when INSPIRE merges two sources into one"
+}

@@ -1,0 +1,7 @@
+{
+  "type": "INSPIRE_RECORD_ID",
+  "description": "INSPIRE record",
+  "url": "http://inspirehep.net/record/<INSPIRE_RECORD_ID>",
+  "example_value": "123",
+  "example_url": "http://inspirehep.net/record/123"
+}

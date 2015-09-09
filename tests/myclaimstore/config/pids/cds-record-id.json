@@ -1,0 +1,7 @@
+{
+  "type": "CDS_RECORD_ID",
+  "description": "CDS record",
+  "url": "http://cds.cern.ch/record/<CDS_RECORD_ID>",
+  "example_value": "123",
+  "example_url": "http://cds.cern.ch/record/123"
+}
