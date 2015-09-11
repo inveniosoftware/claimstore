@@ -18,4 +18,16 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Test package."""
+"""py.test configuration."""
+
+import sys
+
+pytest_plugins = (
+    'claimstore.testing.fixtures.app',
+    'claimstore.testing.fixtures.database'
+)
+
+
+def pytest_configure(config):
+    """Load all the plugins defined in pytest_plugins."""
+    config.pluginmanager.consider_module(sys.modules[__name__])

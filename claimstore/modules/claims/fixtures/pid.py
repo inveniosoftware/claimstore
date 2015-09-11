@@ -31,7 +31,6 @@ from claimstore.ext.sqlalchemy import db
 from claimstore.modules.claims.models import IdentifierType
 
 
-@pytest.fixture
 def create_pid(pid_json):
     """Insert an identifier in the database."""
     pid_json['name'] = pid_json.pop('type')
@@ -41,7 +40,6 @@ def create_pid(pid_json):
     db.session.commit()
 
 
-@pytest.fixture
 def load_all_pids(config_path=None):
     """Populate all persistent identifiers."""
     if config_path:
@@ -60,3 +58,9 @@ def load_all_pids(config_path=None):
     for pid_fp in glob.glob("{}/*.json".format(pids_filepath)):
         with open(pid_fp) as f:
             create_pid(json.loads(f.read()))
+
+
+@pytest.fixture
+def all_pids(db):
+    """Fixture that loads all PIDs."""
+    load_all_pids()

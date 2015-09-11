@@ -31,7 +31,6 @@ from claimstore.ext.sqlalchemy import db
 from claimstore.modules.claims.models import Predicate
 
 
-@pytest.fixture
 def create_predicate(pred_json):
     """Insert a predicate in the database."""
     if not Predicate.query.filter_by(name=pred_json['name']).first():
@@ -40,7 +39,6 @@ def create_predicate(pred_json):
     db.session.commit()
 
 
-@pytest.fixture
 def load_all_predicates(config_path=None):
     """Populate all predicates."""
     if config_path:
@@ -58,4 +56,10 @@ def load_all_predicates(config_path=None):
         )
     for predicate_fp in glob.glob("{}/*.json".format(predicates_filepath)):
         with open(predicate_fp) as f:
-            create_predicate(json.loads(f.read()))
+            create_predicate(json.load(f))
+
+
+@pytest.fixture
+def all_predicates(db):
+    """Fixture that loads all predicates."""
+    load_all_predicates()

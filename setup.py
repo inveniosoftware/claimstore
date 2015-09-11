@@ -94,6 +94,9 @@ setup(
     entry_points={
         'console_scripts': [
             'claimstore = claimstore.cli:cli'
+        ],
+        'pytest11': [
+            'claimstore = claimstore.testing.pytest_plugin'
         ]
     },
     install_requires=[

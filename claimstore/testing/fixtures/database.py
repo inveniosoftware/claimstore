@@ -18,27 +18,27 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Base test class."""
+"""Database fixtures."""
 
-from unittest import TestCase
+import pytest
 
-from claimstore.app import create_app
-from claimstore.ext.sqlalchemy import db
+from claimstore.ext.sqlalchemy import db as db_
 
 
-class ClaimStoreTestCase(TestCase):
+@pytest.yield_fixture(scope='session')
+def database(app):
+    """Ensure that the database schema is created."""
+    db_.create_all()
+    yield db_
+    db_.session.remove()
 
-    """Testing claimstore.core.json."""
 
-    def setUp(self):
-        """Set up."""
-        self.app = create_app()
-        with self.app.app_context():
-            db.create_all()
-
-    def tearDown(self):
-        """Tear down."""
-        with self.app.app_context():
-            db.session.remove()
-            db.drop_all()
-        self.app = None
+@pytest.yield_fixture
+def db(database, monkeypatch):
+    """Provide database access and ensure changes do not persist."""
+    # Prevent database/session modifications
+    monkeypatch.setattr(database.session, 'commit', database.session.flush)
+    monkeypatch.setattr(database.session, 'remove', lambda: None)
+    yield database
+    database.session.rollback()
+    database.session.remove()

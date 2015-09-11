@@ -28,8 +28,9 @@ import pytest
 from flask import current_app
 from webtest import TestApp
 
+from claimstore.modules.claims.models import Claim
 
-@pytest.fixture
+
 def load_all_claims(test_app=None, config_path=None):
     """Fixture that loads all test claims."""
     if test_app is None:
@@ -82,3 +83,19 @@ def dummy_claim():
           "created": "2015-03-25T11:00:00Z"
         }
         """)
+
+
+def _remove_all_claims():
+    """Remove all claims from the DB.
+
+    FIXME: this should never be used before testing. Improve tests in order
+    to avoid using this.
+    """
+    Claim.query.delete()
+
+
+@pytest.fixture
+def all_claims(db):
+    """Fixture that loads all claims."""
+    _remove_all_claims()
+    load_all_claims()

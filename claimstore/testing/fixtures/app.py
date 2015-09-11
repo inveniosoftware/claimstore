@@ -18,17 +18,26 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""claimstore.core.json test suite."""
+"""App fixtures."""
 
-from claimstore.core.json import get_json_schema
+import pytest
+from webtest import TestApp
+
+from claimstore.app import create_app
 
 
-def test_get_json_schema(app):
-    """Testing `get_json_schema()`."""
-    assert '"title": "Service Name",' in \
-        get_json_schema('claims.claimant')
-    assert 'HTTP URL addressing the service home page' in \
-        get_json_schema('claims.claimant')
-    assert '"required": ["type", "description", "url", ' + \
-        '"example_value", "example_url"],' in \
-        get_json_schema('claims.persistent_id')
+@pytest.yield_fixture(scope='session', autouse=True)
+def app():
+    """Create the flask app."""
+    app_ = create_app()
+    with app_.app_context():
+        yield app_
+
+
+@pytest.fixture(scope='session')
+def webtest_app(app):
+    """Create webtest TestApp."""
+    return TestApp(
+        app,
+        extra_environ=dict(REMOTE_ADDR='127.0.0.1')
+    )

@@ -31,7 +31,6 @@ from claimstore.ext.sqlalchemy import db
 from claimstore.modules.claims.models import Claimant
 
 
-@pytest.fixture
 def create_claimant(claimant_json):
     """Insert a claimant in the database."""
     if not Claimant.query.filter_by(name=claimant_json['name']).first():
@@ -40,7 +39,6 @@ def create_claimant(claimant_json):
     db.session.commit()
 
 
-@pytest.fixture
 def load_all_claimants(config_path=None):
     """Fixture that loads all test claimants."""
     if config_path:
@@ -86,3 +84,9 @@ def dummy_claimant():
             ]
         }
         """)
+
+
+@pytest.fixture
+def all_claimants(db):
+    """Fixture that loads all claimants."""
+    load_all_claimants()
