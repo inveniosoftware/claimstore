@@ -28,6 +28,7 @@ from functools import wraps
 import isodate  # noqa
 from flask import Blueprint, current_app, request
 from flask_restful import Api, Resource, abort, inputs, reqparse
+from jsonschema import ValidationError
 from sqlalchemy import or_
 
 from claimstore.core.datetime import loc_date_utc
@@ -100,11 +101,11 @@ class ClaimStoreResource(Resource):
         """Validate that json_data follows the appropiate JSON schema.
 
         :param json_data: JSON data to be validated.
-        :raises: InvalidJSONData
+        :raises: :exc:`InvalidJSONData` if the instance is invalid.
         """
         try:
             validate_json(json_data, self.json_schema)
-        except Exception as e:
+        except ValidationError as e:
             raise InvalidJSONData('JSON data is not valid', extra=str(e))
 
 

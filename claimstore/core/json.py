@@ -62,29 +62,25 @@ def validate_json(json_input, schema):
     :param schema: JSON schema to use in the validation. It must be a string
                    with the format module.schema_name (e.g. claims.claimants).
     :type schema: str.
-    :returns: True if `json_input` follows the schema. False otherwise.
-    :rtype: bool.
+    :raises: :exc:`ValidationError` if the instance is invalid.
     """
-    if schema:
-        schema_content = get_json_schema(schema)
-        module_name, schema_name = schema.split('.')
-        resolver = jsonschema.RefResolver('{}/'.format(
-            pathlib.Path(
-                os.path.join(
-                    current_app.config['BASE_DIR'],
-                    'claimstore',
-                    'modules',
-                    module_name,
-                    'static',
-                    'json',
-                    'schemas'
-                )
-            ).as_uri()),
-            schema_content
-        )
-        jsonschema.Draft4Validator(
-            json.loads(schema_content),
-            resolver=resolver
-        ).validate(json_input)
-        return True
-    return False
+    schema_content = get_json_schema(schema)
+    module_name, schema_name = schema.split('.')
+    resolver = jsonschema.RefResolver('{}/'.format(
+        pathlib.Path(
+            os.path.join(
+                current_app.config['BASE_DIR'],
+                'claimstore',
+                'modules',
+                module_name,
+                'static',
+                'json',
+                'schemas'
+            )
+        ).as_uri()),
+        schema_content
+    )
+    jsonschema.Draft4Validator(
+        json.loads(schema_content),
+        resolver=resolver
+    ).validate(json_input)

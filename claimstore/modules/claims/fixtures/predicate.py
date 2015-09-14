@@ -26,7 +26,9 @@ import os
 
 import pytest
 from flask import current_app
+from jsonschema import ValidationError
 
+from claimstore.core.json import validate_json
 from claimstore.ext.sqlalchemy import db
 from claimstore.modules.claims.models import Predicate
 
@@ -54,9 +56,16 @@ def load_all_predicates(config_path=None):
             'config',
             'predicates'
         )
-    for predicate_fp in glob.glob("{}/*.json".format(predicates_filepath)):
-        with open(predicate_fp) as f:
-            create_predicate(json.load(f))
+    for pred_fp in glob.glob("{}/*.json".format(predicates_filepath)):
+        with open(pred_fp) as f:
+            json_data = json.load(f)
+            try:
+                validate_json(json_data, 'claims.predicate')
+            except ValidationError:
+                print('`{}` could not be loaded. It does not follow the proper'
+                      ' JSON schema specification.'.format(pred_fp))
+                continue
+            create_predicate(json_data)
 
 
 @pytest.fixture

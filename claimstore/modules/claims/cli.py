@@ -63,7 +63,7 @@ def initdb(config):
     load_all_predicates(config)
     load_all_pids(config)
     load_all_claimants(config)
-    click.echo('Database successfully initialised.')
+    click.echo('Database initialisation completed.')
 
 
 @click.command()
@@ -95,7 +95,7 @@ def populatedb(data):
                 )
     try:
         load_all_claims(config_path=data)
-        click.echo('Database successfully populated.')
+        click.echo('Database populate completed.')
     except Exception:
         click.echo(
             'Claims could not be loaded. Try `claimstore initdb` first.'

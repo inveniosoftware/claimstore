@@ -55,34 +55,39 @@ def load_all_claims(test_app=None, config_path=None):
         )
     for claim_fp in glob.glob("{}/*.json".format(claims_filepath)):
         with open(claim_fp) as f:
-            test_app.post_json(
+            resp = test_app.post_json(
                 '/claims',
-                json.loads(f.read()))
+                json.load(f),
+                expect_errors=True
+            )
+            if resp.status_code != 200:
+                print('{} could not be loaded. {}.'.format(
+                    claim_fp,
+                    resp.json['message']
+                ))
 
 
 @pytest.fixture
 def dummy_claim():
     """Fixture that creates a dummy claim."""
-    return json.loads("""
-        {
-          "claimant": "dummy_claimant",
-          "subject": {
+    return {
+        "claimant": "dummy_claimant",
+        "subject": {
             "type": "CDS_RECORD_ID",
             "value": "2001192"
-          },
-          "predicate": "is_same_as",
-          "certainty": 1.0,
-          "object": {
+        },
+        "predicate": "is_same_as",
+        "certainty": 1.0,
+        "object": {
             "type": "CDS_REPORT_NUMBER",
             "value": "CMS-PAS-HIG-14-008"
-          },
-          "arguments": {
+        },
+        "arguments": {
             "human": 0,
             "actor": "CDS_submission"
-          },
-          "created": "2015-03-25T11:00:00Z"
-        }
-        """)
+        },
+        "created": "2015-03-25T11:00:00Z"
+    }
 
 
 def _remove_all_claims():

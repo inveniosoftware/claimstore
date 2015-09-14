@@ -26,7 +26,9 @@ import os
 
 import pytest
 from flask import current_app
+from jsonschema import ValidationError
 
+from claimstore.core.json import validate_json
 from claimstore.ext.sqlalchemy import db
 from claimstore.modules.claims.models import Claimant
 
@@ -56,34 +58,41 @@ def load_all_claimants(config_path=None):
         )
     for claimant_fp in glob.glob("{}/*.json".format(claimants_filepath)):
         with open(claimant_fp) as f:
-            create_claimant(json.loads(f.read()))
+            json_data = json.load(f)
+            try:
+                validate_json(json_data, 'claims.claimant')
+            except ValidationError:
+                print(
+                    '`{}` could not be loaded. It does not follow the proper '
+                    'JSON schema specification.'.format(claimant_fp)
+                )
+                continue
+            create_claimant(json_data)
 
 
 @pytest.fixture
 def dummy_claimant():
     """Fixture that creates a dummy claimant."""
-    return json.loads("""
-        {
-            "name": "dummy_claimant",
-            "url": "http://dummy.net",
-            "persistent_identifiers": [
-              {
+    return {
+        "name": "dummy_claimant",
+        "url": "http://dummy.net",
+        "persistent_identifiers": [
+            {
                 "type": "CDS_RECORD_ID",
                 "description": "CDS record",
                 "url": "http://cds.cern.ch/record/<CDS_RECORD_ID>",
                 "example_value": "123",
                 "example_url": "http://cds.cern.ch/record/123"
-              },
-              {
+            },
+            {
                 "type": "CDS_REPORT_NUMBER",
                 "description": "CDS report number",
                 "url": "http://cds.cern.ch/report/<CDS_REPORT_NUMBER>",
                 "example_value": "CMS-PAS-HIG-14-008",
                 "example_url": "http://cds.cern.ch/report/CMS-PAS-HIG-14-008"
-              }
-            ]
-        }
-        """)
+            }
+        ]
+    }
 
 
 @pytest.fixture

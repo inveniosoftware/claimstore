@@ -26,7 +26,9 @@ import os
 
 import pytest
 from flask import current_app
+from jsonschema import ValidationError
 
+from claimstore.core.json import validate_json
 from claimstore.ext.sqlalchemy import db
 from claimstore.modules.claims.models import IdentifierType
 
@@ -57,7 +59,14 @@ def load_all_pids(config_path=None):
         )
     for pid_fp in glob.glob("{}/*.json".format(pids_filepath)):
         with open(pid_fp) as f:
-            create_pid(json.loads(f.read()))
+            json_data = json.load(f)
+            try:
+                validate_json(json_data, 'claims.persistent_id')
+            except ValidationError:
+                print('`{}` could not be loaded. It does not follow the proper'
+                      ' JSON schema specification.'.format(pid_fp))
+                continue
+            create_pid(json_data)
 
 
 @pytest.fixture
