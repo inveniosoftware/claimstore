@@ -25,17 +25,18 @@ from pathlib import Path
 import click
 from flask_cli import with_appcontext
 
-from claimstore.ext.sqlalchemy import db
+from claimstore.ext.sqlalchemy import database, db
 from claimstore.modules.claims.fixtures.claim import load_all_claims
 from claimstore.modules.claims.fixtures.claimant import load_all_claimants
 from claimstore.modules.claims.fixtures.pid import load_all_pids
 from claimstore.modules.claims.fixtures.predicate import load_all_predicates
+from claimstore.modules.claims.models import EquivalentIdentifier
 
 
-@click.command()
+@database.command()
 @click.option('--config', help='Path to a folder with the db configuration')
 @with_appcontext
-def initdb(config):
+def create(config):
     """Create database and populate it with basic data.
 
     The database will be populated with the predicates, persistent identifiers
@@ -66,10 +67,10 @@ def initdb(config):
     click.echo('Database initialisation completed.')
 
 
-@click.command()
+@database.command()
 @click.option('--data', help='Path to a folder with data (claims)')
 @with_appcontext
-def populatedb(data):
+def populate(data):
     """Populate database with claims.
 
     The database will be populated with the claims that are defined in
@@ -98,8 +99,46 @@ def populatedb(data):
         click.echo('Database populate completed.')
     except Exception:
         click.echo(
-            'Claims could not be loaded. Try `claimstore initdb` first.'
+            'Claims could not be loaded. Try `claimstore database create` '
+            'first.'
         )
 
 
-commands = [initdb, populatedb]
+@database.command()
+@with_appcontext
+def drop():
+    """Drop the whole database."""
+    if click.confirm('Are you sure you want to drop the whole database?'):
+        db.drop_all()
+        click.echo('Database dropped')
+    else:
+        click.echo('Command aborted')
+
+
+@click.group()
+@with_appcontext
+def eqid():
+    """Command providing actions to alter the Equivalent Identifier index."""
+    pass
+
+
+@eqid.command('drop')
+@with_appcontext
+def drop_eqid():
+    """Delete all the entries in the eqid index."""
+    if click.confirm('Are you sure to drop the whole index?'):
+        EquivalentIdentifier.clear()
+        click.echo('Index cleared.')
+    else:
+        click.echo('Command aborted')
+
+
+@eqid.command()
+@with_appcontext
+def reindex():
+    """Process all claims to rebuild the eqid index."""
+    EquivalentIdentifier.rebuild()
+    click.echo('Index rebuilt.')
+
+
+commands = [eqid]

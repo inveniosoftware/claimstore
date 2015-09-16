@@ -68,20 +68,32 @@ def load_all_claims(test_app=None, config_path=None):
 
 
 @pytest.fixture
-def dummy_claim():
+def dummy_subject():
+    """Fixture of a dummy subject."""
+    return {
+        "type": "CDS_RECORD_ID",
+        "value": "test-2001192"
+    }
+
+
+@pytest.fixture
+def dummy_object():
+    """Fixture of a dummy object."""
+    return {
+        "type": "CDS_REPORT_NUMBER",
+        "value": "CMS-PAS-HIG-14-008"
+    }
+
+
+@pytest.fixture
+def dummy_claim(dummy_subject, dummy_object):
     """Fixture that creates a dummy claim."""
     return {
         "claimant": "dummy_claimant",
-        "subject": {
-            "type": "CDS_RECORD_ID",
-            "value": "2001192"
-        },
+        "subject": dummy_subject,
         "predicate": "is_same_as",
         "certainty": 1.0,
-        "object": {
-            "type": "CDS_REPORT_NUMBER",
-            "value": "CMS-PAS-HIG-14-008"
-        },
+        "object": dummy_object,
         "arguments": {
             "human": 0,
             "actor": "CDS_submission"

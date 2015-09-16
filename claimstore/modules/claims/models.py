@@ -22,6 +22,8 @@
 
 from uuid import uuid4
 
+from flask import current_app
+from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 from claimstore.core.datetime import now_utc
@@ -84,6 +86,12 @@ class Claim(db.Model):
     )
     """Value of the subject."""
 
+    subject_eqid = db.Column(
+        db.Integer,
+        db.ForeignKey('equivalent_identifier.id', ondelete='SET NULL')
+    )
+    """Unique identifier for this subject (type, value)."""
+
     predicate_id = db.Column(
         db.Integer,
         db.ForeignKey('predicate.id'),
@@ -119,8 +127,27 @@ class Claim(db.Model):
     )
     """Value of the object."""
 
+    object_eqid = db.Column(
+        db.Integer,
+        db.ForeignKey('equivalent_identifier.id', ondelete='SET NULL')
+    )
+    """Unique identifier for this object (type, value)."""
+
     claim_details = db.Column(JSONB)
     """JSONB representation of the full claim as received."""
+
+    @classmethod
+    def equivalents(cls, type_name, value):
+        """Get claims with the all the equivalent subjects or objects."""
+        all_eqids = EquivalentIdentifier.equivalent_ids(type_name, value)
+        if all_eqids:
+            return cls.query.filter(
+                or_(
+                    cls.subject_eqid.in_(all_eqids),
+                    cls.object_eqid.in_(all_eqids)
+                )
+            ).all()
+        return []
 
     def __repr__(self):
         """Printable version of the Claim object."""
@@ -231,6 +258,30 @@ class IdentifierType(db.Model):
     )
     """Id of the associated claimant that registered this identifier."""
 
+    subject = db.relationship(
+        'Claim',
+        backref='subject_type',
+        primaryjoin="Claim.subject_type_id == IdentifierType.id",
+        lazy='dynamic'
+    )
+    """Backref in claim to reach this identifier_type."""
+
+    object = db.relationship(
+        'Claim',
+        backref='object_type',
+        primaryjoin="Claim.object_type_id == IdentifierType.id",
+        lazy='dynamic'
+    )
+    """Backref in claim to reach this identifier_type."""
+
+    eqid = db.relationship(
+        'EquivalentIdentifier',
+        backref='type',
+        primaryjoin="EquivalentIdentifier.type_id == IdentifierType.id",
+        lazy='dynamic'
+    )
+    """Backref in equivalent_identifier to reach this identifier_type."""
+
     def __repr__(self):
         """Printable version of the IdentifierType object."""
         return '<IdentifierType {}>'.format(self.name)
@@ -269,8 +320,182 @@ class Predicate(db.Model):
         cascade="all, delete-orphan",
         lazy='dynamic'
     )
-    """Claim associated with this predicate."""
+    """Backref in claim to reach this predicate."""
 
     def __repr__(self):
         """Printable version of the Predicate object."""
         return '<Predicate {}'.format(self.name)
+
+
+class EquivalentIdentifier(db.Model):
+
+    """Model that defines equivalent identifiers.
+
+    A given tuple (IdentifierType1, value1), e.g. (DOI, 1234) will have
+    associated a unique id (`eqid`) that will be shared by the other tuple,
+    e.g. (IdentifierType2, value2) in the relationship, in case the two IDs are
+    equivalent (e.g. related via is_same_as predicate). If new equality claims
+    are done in which existing identifiers are used, they will take the `eqid`
+    from them.
+
+    For instance, if we have some claims like:
+
+    =========== ============ ===========  ========== ===========
+    SubjectType SubjectValue  Predicate   ObjectType ObjectValue
+    =========== ============ ===========  ========== ===========
+    Type1       Value1       is_same_as   Type2      Value2
+    Type3       Value3       is_same_as   Type4      Value4
+    Type1       Value1       is_same_as   Type4      Value4
+    Type5       Value5       is_same_as   Type6      Value6
+    =========== ============ ===========  ========== ===========
+
+
+    Then, in the EquivalentIdentifier table there will be something like:
+
+    ====== ====== ====
+    type   value  uuid
+    ====== ====== ====
+    Type1  Value1 01
+    Type2  Value2 01
+    Type3  Value3 01
+    Type4  Value4 01
+    Type5  Value4 02
+    Type6  Value4 02
+    ====== ====== ====
+
+    This table will enable and facilitate several use cases:
+
+    #. We could very easily get a list of the different identifiers for the
+       same data resource.
+    #. It will simplify the recursive query by type/value in any
+       subject/object claim.
+    """
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+    """Unique id of the data resource."""
+
+    eqid = db.Column(
+        UUID,
+        nullable=False,
+        index=True
+    )
+    """Universally Unique Identifier that represents a single data resource."""
+
+    type_id = db.Column(
+        db.Integer,
+        db.ForeignKey('identifier_type.id'),
+        nullable=False,
+        index=True
+    )
+    """The id of a given IdentifierType."""
+
+    value = db.Column(
+        db.String,
+        nullable=False,
+        index=True
+    )
+    """A given value for the IdentifierType."""
+
+    @classmethod
+    def equivalents(cls, type_name, value):
+        """Return all the equivalent identifiers.
+
+        This method fetches the eqid for a given (type_name, value) and uses it
+        to find all the equivalent identifiers.
+        """
+        type_ = IdentifierType.query.filter_by(name=type_name).first()
+        if type_:
+            eqi = cls.query.with_entities(
+                cls.eqid).filter_by(
+                    type_id=type_.id,
+                    value=value
+            ).first()
+            if eqi:
+                return cls.query.filter(
+                    cls.eqid == eqi.eqid
+                )
+        return []
+
+    @classmethod
+    def equivalent_ids(cls, type_name, value):
+        """Return the identifiers of all the equivalent entities.
+
+        This method fetches the eqid for a given (type_name, value) and uses it
+        to find all the equivalent identifiers.
+        It returns a list with `EquivalentIdentifier.id`.
+        """
+        eqs = cls.equivalents(type_name, value)
+        if eqs:
+            return eqs.with_entities(cls.id)
+        return []
+
+    @classmethod
+    def set_equivalent_id(cls, subject_id, subject_value, object_id,
+                          object_value):
+        """Store and return the equivalent identifiers as required."""
+        subject_eqid = cls.query.filter_by(
+            type_id=subject_id,
+            value=subject_value
+        ).first()
+        object_eqid = cls.query.filter_by(
+            type_id=object_id,
+            value=object_value
+        ).first()
+        if not (subject_eqid or object_eqid):
+            eqid_uuid = str(uuid4())
+            subject_eqid = cls(
+                eqid=eqid_uuid,
+                type_id=subject_id,
+                value=subject_value
+            )
+            db.session.add(subject_eqid)
+            object_eqid = cls(
+                eqid=eqid_uuid,
+                type_id=object_id,
+                value=object_value
+            )
+            db.session.add(object_eqid)
+        elif subject_eqid and object_eqid and \
+                subject_eqid.eqid != object_eqid.eqid:
+            cls.query.filter_by(eqid=object_eqid.eqid).update({
+                cls.eqid: subject_eqid.eqid
+            })
+        elif subject_eqid and not object_eqid:
+            object_eqid = cls(
+                eqid=subject_eqid.eqid,
+                type_id=object_id,
+                value=object_value
+            )
+            db.session.add(object_eqid)
+        elif object_eqid and not subject_eqid:
+            subject_eqid = cls(
+                eqid=object_eqid.eqid,
+                type_id=subject_id,
+                value=subject_value
+            )
+            db.session.add(subject_eqid)
+        db.session.flush()
+        return subject_eqid, object_eqid
+
+    @classmethod
+    def clear(cls):
+        """Delete all the entries of the table equivalent_identifiers."""
+        cls.query.delete()
+        db.session.commit()
+
+    @classmethod
+    def rebuild(cls):
+        """Rebuild index based on claims."""
+        for claim in Claim.query.all():
+            if claim.predicate.name in \
+               current_app.config['CFG_EQUIVALENT_PREDICATES']:
+                cls.set_equivalent_id(
+                    claim.subject_type_id,
+                    claim.subject_value,
+                    claim.object_type_id,
+                    claim.object_value
+                )
+        db.session.commit()

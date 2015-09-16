@@ -2,7 +2,7 @@
   "claimant": "CDS",
   "subject": {
     "type": "CDS_RECORD_ID",
-    "value": "2001192"
+    "value": "2003192"
   },
   "predicate": "is_same_as",
   "certainty": 1.0,

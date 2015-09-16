@@ -18,16 +18,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-web:
-  build: .
-  command: bash -c "claimstore database create && claimstore database populate && python run.py"
-  environment:
-    - SQLALCHEMY_DATABASE_URI=postgres://postgres:postgres@db:5432/postgres
-  ports:
-    - "5000:5000"
-  volumes:
-    - .:/code
-  links:
-    - db
-db:
-  image: postgres
+"""Module configuration."""
+
+CFG_EQUIVALENT_PREDICATES = ['is_same_as', 'is_variant_of']

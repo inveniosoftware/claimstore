@@ -36,6 +36,7 @@
       <li><a class="page-scroll" href="#listclaims">List claims</a></li>
       <li><a class="page-scroll" href="#listidentifiers">List identifiers</a></li>
       <li><a class="page-scroll" href="#listpredicates">List predicates</a></li>
+      <li><a class="page-scroll" href="#listeqids">List predicates</a></li>
     </ul>
   </div>
   <div class="col-sm-9 col-md-9 doc-content">
@@ -261,6 +262,7 @@ r = requests.post(url, data=data, headers=headers)</pre>
                   <li>role: actor's role (one can use %).</li>
                   <li>type: identifier type (e.g. DOI).</li>
                   <li>value: identifier value (e.g. 20110301).</li>
+                  <li>recurse: used in combination with "type" and "value" will find all the equivalent identifiers to the specified one.</li>
                   <li>subject: identifier type used as a subject type.</li>
                   <li>object: identifier type used as an object type.</li>
                 </ul>
@@ -453,6 +455,79 @@ print response.json()
                     <pre>
 import requests
 response = requests.get("http://localhost:5000/predicates")
+print response.json()
+                    </pre>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="listeqids">
+      <h3>List equivalent identifiers</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <colgroup>
+            <col class="col-xs-1">
+            <col class="col-xs-7">
+          </colgroup>
+          <thead>
+            <tr>
+              <th colspan="2">GET /eqids</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Description</th>
+              <td>List of equivalent identifiers in ClaimStore</td>
+            </tr>
+            <tr>
+              <th scope="row">URL</th>
+              <td><a href="{{ url_for('claims_restful.eqids') }}">http://localhost:5000/eqids</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Method</th>
+              <td>GET</td>
+            </tr>
+            <tr>
+              <th scope="row">Success response</th>
+              <td>
+                <p>JSON list with all the equivalent identifiers.</p>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Error response</th>
+              <td>
+                <ul>
+                  <li>Code: <code>40X</code></li>
+                  <li>Body: JSON with status and message</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Example</th>
+              <td>
+                <ul id="example-tabs-list" class="nav nav-tabs">
+                  <li role="presentation" class="active"><a href="#httpie-list-eqids" data-toogle="tab">httpie</a></li>
+                  <li role="presentation"><a href="#curl-list-eqids" data-toogle="tab">cURL</a></li>
+                  <li role="presentation"><a href="#python-list-eqids" data-toogle="tab">Python</a></li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="httpie-list-eqids">
+                    <br />
+                    <pre>http GET http://localhost:5000/eqids</pre>
+                  </div>
+                  <div class="tab-pane curl" id="curl-list-eqids">
+                    <br />
+                    <pre>curl http://localhost:5000/eqids</pre>
+                  </div>
+                  <div class="tab-pane" id="python-list-eqids">
+                    <br />
+                    <pre>
+import requests
+response = requests.get("http://localhost:5000/eqids")
 print response.json()
                     </pre>
                   </div>

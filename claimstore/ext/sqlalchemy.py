@@ -37,16 +37,12 @@ models = RegistryProxy(
 def setup_app(app):
     """Setup sqlalchemy."""
     # Add extension CLI to application.
-    app.cli.add_command(dropalldb)
+    app.cli.add_command(database)
     db.init_app(app)
 
 
-@click.command()
+@click.group()
 @with_appcontext
-def dropalldb():
-    """Drop database."""
-    if click.confirm('Are you sure you want to drop the whole database?'):
-        db.drop_all()
-        click.echo('Database dropped')
-    else:
-        click.echo('Command aborted')
+def database():
+    """Database related commands."""
+    pass

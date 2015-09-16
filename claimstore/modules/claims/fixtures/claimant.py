@@ -96,6 +96,15 @@ def dummy_claimant():
 
 
 @pytest.fixture
+def create_dummy_claimant(webtest_app, dummy_claimant):
+    """Add dummy claimant to the database."""
+    webtest_app.post_json(
+        '/subscribe',
+        dummy_claimant
+    )
+
+
+@pytest.fixture
 def all_claimants(db):
     """Fixture that loads all claimants."""
     load_all_claimants()

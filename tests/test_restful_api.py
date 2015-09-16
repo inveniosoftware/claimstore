@@ -166,12 +166,25 @@ def test_get_claims_by_type_value(webtest_app):
     # There are 2 CDS_RECORD_ID, one as subject and one as an object.
     resp = webtest_app.get('/claims?type=CDS_RECORD_ID')
     assert len(resp.json) == 2
-    # The type with value `2001192` can be found 1 times.
-    resp = webtest_app.get('/claims?value=2001192')
-    assert len(resp.json) == 1
+    # The type with value `2003192` can be found 2 times.
+    resp = webtest_app.get('/claims?value=2003192')
+    assert len(resp.json) == 2
     # Filter by type and value
-    resp = webtest_app.get('/claims?type=CDS_RECORD_ID&value=2001192')
+    resp = webtest_app.get('/claims?type=CDS_RECORD_ID&value=2003192')
+    assert len(resp.json) == 2
+
+
+@populate_all
+def test_get_claims_by_type_value_recursive(webtest_app):
+    """Testing GET claims filtering by type."""
+    resp = webtest_app.get(
+        '/claims?type=INSPIRE_RECORD_ID&value=cond-mat/9906097'
+    )
     assert len(resp.json) == 1
+    resp = webtest_app.get(
+        '/claims?type=INSPIRE_RECORD_ID&value=cond-mat/9906097&recurse=1'
+    )
+    assert len(resp.json) == 2
 
 
 @populate_all

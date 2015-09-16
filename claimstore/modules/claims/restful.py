@@ -23,21 +23,23 @@
 isort:skip_file
 """
 
+from collections import defaultdict
 from functools import wraps
+from uuid import UUID
 
 import isodate  # noqa
 from flask import Blueprint, current_app, request
 from flask_restful import Api, Resource, abort, inputs, reqparse
 from jsonschema import ValidationError
-from sqlalchemy import or_
+from sqlalchemy import and_, or_
 
 from claimstore.core.datetime import loc_date_utc
 from claimstore.core.exception import InvalidJSONData, InvalidRequest, \
     RestApiException
 from claimstore.core.json import validate_json
 from claimstore.ext.sqlalchemy import db
-from claimstore.modules.claims.models import Claim, Claimant, IdentifierType, \
-    Predicate
+from claimstore.modules.claims.models import Claim, Claimant, \
+    EquivalentIdentifier, IdentifierType, Predicate
 
 blueprint = Blueprint(
     'claims_restful',
@@ -133,6 +135,7 @@ class Subscription(ClaimStoreResource):
                 url=json_data['url']
             )
             db.session.add(new_claimant)
+            db.session.flush()
 
             if 'persistent_identifiers' in json_data:
                 for persistent_id in json_data['persistent_identifiers']:
@@ -238,6 +241,12 @@ class ClaimsResource(ClaimStoreResource):
             help='Value of an Identifier Type',
             trim=True
         )
+        self.get_claims_parser.add_argument(
+            'recurse', dest='recurse',
+            type=inputs.boolean, default=False, location='args',
+            help='True if fetching all equivalent identifiers',
+            trim=True
+        )
 
     def post(self):
         """Record a new claim.
@@ -283,15 +292,27 @@ class ClaimsResource(ClaimStoreResource):
         if not predicate:
             raise InvalidRequest('Predicate not registered')
 
+        subject_eqid, object_eqid = None, None
+        if json_data['predicate'] in \
+                current_app.config['CFG_EQUIVALENT_PREDICATES']:
+            subject_eqid, object_eqid = EquivalentIdentifier.set_equivalent_id(
+                subject_type.id,
+                json_data['subject']['value'],
+                object_type.id,
+                json_data['object']['value']
+            )
+
         arguments = json_data.get('arguments', {})
         new_claim = Claim(
             created=created_dt,
             claimant=claimant,
             subject_type_id=subject_type.id,
             subject_value=json_data['subject']['value'],
+            subject_eqid=subject_eqid.id if subject_eqid else None,
             predicate_id=predicate.id,
             object_type_id=object_type.id,
             object_value=json_data['object']['value'],
+            object_eqid=object_eqid.id if object_eqid else None,
             certainty=json_data['certainty'],
             human=arguments.get('human', None),
             actor=arguments.get('actor', None),
@@ -338,6 +359,49 @@ class ClaimsResource(ClaimStoreResource):
             claims = Claim.query.all()
         else:
             claims = Claim.query
+
+            if args.type and args.value:
+                if args.recurse:
+                    claims = Claim.equivalents(args.type, args.value)
+                    if not claims:
+                        return []
+                else:
+                    type_ = IdentifierType.query.filter_by(
+                        name=args.type
+                    ).first()
+                    if type_:
+                        claims = claims. \
+                            filter(
+                                or_(
+                                    and_(
+                                        Claim.subject_type_id == type_.id,
+                                        Claim.subject_value.like(args.value)
+                                    ),
+                                    and_(
+                                        Claim.object_type_id == type_.id,
+                                        Claim.object_value.like(args.value)
+                                    )
+                                )
+                            )
+                    else:
+                        return []
+            elif args.type:  # Only by type
+                    claims = claims. \
+                        join(
+                            IdentifierType,
+                            or_(
+                                Claim.subject_type_id == IdentifierType.id,
+                                Claim.object_type_id == IdentifierType.id
+                            )
+                        ).filter(IdentifierType.name == args.type)
+
+            elif args.value:  # Only by value
+                claims = claims. \
+                    filter(
+                        or_(
+                            Claim.subject_value.like(args.value),
+                            Claim.object_value.like(args.value))
+                    )
 
             if args.since:
                 claims = claims.filter(
@@ -386,30 +450,12 @@ class ClaimsResource(ClaimStoreResource):
                         join(object_type,
                              Claim.object_type_id == object_type.id). \
                         filter(object_type.name == args.object)
-            else:
-                # Type searches both in subject and object
-                if args.type:
-                    claims = claims. \
-                        join(
-                            IdentifierType,
-                            or_(
-                                Claim.subject_type_id == IdentifierType.id,
-                                Claim.object_type_id == IdentifierType.id
-                            )
-                        ).filter(IdentifierType.name == args.type)
-
-                if args.value:
-                    claims = claims. \
-                        filter(
-                            or_(
-                                Claim.subject_value.like(args.value),
-                                Claim.object_value.like(args.value))
-                        )
 
         output = []
         for c in claims:
             item = c.claim_details
             item['recieved'] = c.received.isoformat()
+            item['uuid'] = c.uuid
             output.append(item)
         return output
 
@@ -434,6 +480,41 @@ class PredicateResource(ClaimStoreResource):
         return [pred.name for pred in predicates]
 
 
+class EquivalentIdResource(ClaimStoreResource):
+
+    """Resource that handles Equivalent Identifier requests."""
+
+    def __init__(self):
+        """Initialise Equivalent Identifier Resource."""
+        super(ClaimStoreResource, self).__init__()
+        self.get_eqids_parser = reqparse.RequestParser()
+        self.get_eqids_parser.add_argument(
+            'eqid', dest='eqid',
+            type=str, location='args',
+            help='Unique equivalent identifier',
+            trim=True
+        )
+
+    def get(self):
+        """GET service that returns the stored Equivalent Identifiers."""
+        args = self.get_eqids_parser.parse_args()
+        if args.eqid:
+            try:
+                UUID(args.eqid)
+            except ValueError:
+                raise InvalidRequest('Badly formed EQID (uuid)')
+            eqids = EquivalentIdentifier.query.filter_by(eqid=args.eqid)
+        else:
+            eqids = EquivalentIdentifier.query.all()
+        output_dict = defaultdict(list)
+        for eqi in eqids:
+            output_dict[eqi.eqid].append({
+                'type': eqi.type.name,
+                'value': eqi.value
+            })
+        return output_dict
+
+
 claims_api.add_resource(Subscription,
                         '/subscribe',
                         endpoint='subscribe')
@@ -446,3 +527,6 @@ claims_api.add_resource(IdentifierResource,
 claims_api.add_resource(PredicateResource,
                         '/predicates',
                         endpoint='predicates')
+claims_api.add_resource(EquivalentIdResource,
+                        '/eqids',
+                        endpoint='eqids')
