@@ -25,6 +25,8 @@ from copy import deepcopy
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
 
+from claimstore.modules.claims.fixtures.decorator import \
+    populate_all_and_dummy_claimant
 from claimstore.modules.claims.models import EquivalentIdentifier, \
     IdentifierType
 
@@ -36,18 +38,7 @@ pytest_plugins = (
 )
 
 
-def populate_all(f):
-    """Simple decorator to populate db."""
-    return pytest.mark.usefixtures(
-        'all_predicates',
-        'all_pids',
-        'all_claimants',
-        'all_claims',
-        'create_dummy_claimant'
-    )(f)
-
-
-@populate_all
+@populate_all_and_dummy_claimant
 def test_new_equivalence(webtest_app, dummy_claim, dummy_subject,
                          dummy_object):
     """New subject and object.
@@ -99,7 +90,7 @@ def test_new_equivalence(webtest_app, dummy_claim, dummy_subject,
     assert len(eqs) == 2
 
 
-@populate_all
+@populate_all_and_dummy_claimant
 def test_new_subject(webtest_app, dummy_claim, dummy_subject, dummy_object):
     """Test equivalence with a new subject.
 
@@ -139,7 +130,7 @@ def test_new_subject(webtest_app, dummy_claim, dummy_subject, dummy_object):
     assert pre_dummy_object.eqid == post_dummy_subject.eqid
 
 
-@populate_all
+@populate_all_and_dummy_claimant
 def test_new_object(webtest_app, dummy_claim, dummy_subject, dummy_object):
     """Test equivalence with a new object.
 
@@ -182,7 +173,7 @@ def test_new_object(webtest_app, dummy_claim, dummy_subject, dummy_object):
     assert pre_dummy_subject.eqid == post_dummy_object.eqid
 
 
-@populate_all
+@populate_all_and_dummy_claimant
 def test_existing_subject_object(webtest_app, dummy_claim, dummy_subject,
                                  dummy_object):
     """Test equivalence with an already existing subject and object.

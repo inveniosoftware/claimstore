@@ -18,31 +18,27 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Sqlalchemy setup."""
+"""Fixture decorators."""
 
-import click
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask_cli import with_appcontext
-from flask_registry import ModuleAutoDiscoveryRegistry, RegistryProxy
-
-db = SQLAlchemy()
-
-models = RegistryProxy(
-    'models',  # Registry namespace
-    ModuleAutoDiscoveryRegistry,
-    'models'   # Module name (i.e. models.py)
-)
+import pytest
 
 
-def setup_app(app):
-    """Setup sqlalchemy."""
-    # Add extension CLI to application.
-    app.cli.add_command(database_cli)
-    db.init_app(app)
+def populate_all(f):
+    """Simple decorator to populate db."""
+    return pytest.mark.usefixtures(
+        'all_predicates',
+        'all_pids',
+        'all_claimants',
+        'all_claims'
+    )(f)
 
 
-@click.group('database')
-@with_appcontext
-def database_cli():
-    """Database related commands."""
-    pass
+def populate_all_and_dummy_claimant(f):
+    """Simple decorator to populate db, including a dummy claimant."""
+    return pytest.mark.usefixtures(
+        'all_predicates',
+        'all_pids',
+        'all_claimants',
+        'all_claims',
+        'create_dummy_claimant'
+    )(f)

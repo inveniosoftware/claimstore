@@ -22,22 +22,14 @@
 
 import pytest
 
+from claimstore.modules.claims.fixtures.decorator import populate_all
+
 pytest_plugins = (
     'claimstore.modules.claims.fixtures.claim',
     'claimstore.modules.claims.fixtures.claimant',
     'claimstore.modules.claims.fixtures.pid',
     'claimstore.modules.claims.fixtures.predicate'
 )
-
-
-def populate_all(f):
-    """Simple decorator to populate db."""
-    return pytest.mark.usefixtures(
-        'all_predicates',
-        'all_pids',
-        'all_claimants',
-        'all_claims'
-    )(f)
 
 
 @pytest.mark.usefixtures('all_predicates')

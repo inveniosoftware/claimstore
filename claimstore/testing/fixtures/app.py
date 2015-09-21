@@ -21,6 +21,8 @@
 """App fixtures."""
 
 import pytest
+from click.testing import CliRunner
+from flask_cli.cli import ScriptInfo
 from webtest import TestApp
 
 from claimstore.app import create_app
@@ -41,3 +43,14 @@ def webtest_app(app):
         app,
         extra_environ=dict(REMOTE_ADDR='127.0.0.1')
     )
+
+
+@pytest.fixture(scope='session')
+def cli_runner(app):
+    """Create a cli runner."""
+    def cli_invoke(command, args, input=None):
+        # Testing click applications which needs the Flask app context requires
+        # you to manually create a ScriptInfo object
+        obj = ScriptInfo(create_app=lambda x: app)
+        return CliRunner().invoke(command, args, input=input, obj=obj)
+    return cli_invoke

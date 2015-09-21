@@ -25,7 +25,7 @@ from pathlib import Path
 import click
 from flask_cli import with_appcontext
 
-from claimstore.ext.sqlalchemy import database, db
+from claimstore.ext.sqlalchemy import database_cli, db
 from claimstore.modules.claims.fixtures.claim import load_all_claims
 from claimstore.modules.claims.fixtures.claimant import load_all_claimants
 from claimstore.modules.claims.fixtures.pid import load_all_pids
@@ -33,7 +33,7 @@ from claimstore.modules.claims.fixtures.predicate import load_all_predicates
 from claimstore.modules.claims.models import EquivalentIdentifier
 
 
-@database.command()
+@database_cli.command()
 @click.option('--config', help='Path to a folder with the db configuration')
 @with_appcontext
 def create(config):
@@ -67,7 +67,7 @@ def create(config):
     click.echo('Database initialisation completed.')
 
 
-@database.command()
+@database_cli.command()
 @click.option('--data', help='Path to a folder with data (claims)')
 @with_appcontext
 def populate(data):
@@ -104,7 +104,7 @@ def populate(data):
         )
 
 
-@database.command()
+@database_cli.command()
 @with_appcontext
 def drop():
     """Drop the whole database."""
@@ -115,14 +115,14 @@ def drop():
         click.echo('Command aborted')
 
 
-@click.group()
+@click.group('eqid')
 @with_appcontext
-def eqid():
+def eqid_cli():
     """Command providing actions to alter the Equivalent Identifier index."""
     pass
 
 
-@eqid.command('drop')
+@eqid_cli.command('drop')
 @with_appcontext
 def drop_eqid():
     """Delete all the entries in the eqid index."""
@@ -133,12 +133,15 @@ def drop_eqid():
         click.echo('Command aborted')
 
 
-@eqid.command()
+@eqid_cli.command()
 @with_appcontext
 def reindex():
     """Process all claims to rebuild the eqid index."""
-    EquivalentIdentifier.rebuild()
-    click.echo('Index rebuilt.')
+    if click.confirm('Are you sure to reindex eqid?'):
+        EquivalentIdentifier.rebuild()
+        click.echo('Index rebuilt.')
+    else:
+        click.echo('Command aborted')
 
 
-commands = [eqid]
+commands = [eqid_cli]
