@@ -32,6 +32,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.coverage',
+    'sphinxcontrib.httpdomain',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -102,7 +103,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -260,3 +261,20 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+
+# Extenstion to generate simple docstrings from a given method
+from sphinx.ext import autodoc
+
+class SimpleDocumenter(autodoc.MethodDocumenter):
+    objtype = "simple"
+
+    #do not indent the content
+    content_indent = ""
+
+    #do not add a header to the docstring
+    def add_directive_header(self, sig):
+        pass
+
+def setup(app):
+    app.add_autodocumenter(SimpleDocumenter)

@@ -206,3 +206,15 @@ def test_get_predicates(webtest_app):
     resp = webtest_app.get('/predicates')
     assert resp.status_code == 200
     assert len(resp.json) == 5
+
+
+@populate_all
+def test_get_eqids(webtest_app):
+    """Testing GET eqids api."""
+    resp = webtest_app.get('/eqids')
+    assert resp.status_code == 200
+    assert len(resp.json) == 2
+    eqid = list(resp.json)[0]
+    resp = webtest_app.get('/eqids/{}'.format(eqid))
+    assert resp.status_code == 200
+    assert len(resp.json) == 1

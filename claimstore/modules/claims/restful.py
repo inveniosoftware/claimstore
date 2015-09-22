@@ -25,7 +25,6 @@ isort:skip_file
 
 from collections import defaultdict
 from functools import wraps
-from uuid import UUID
 
 import isodate  # noqa
 from flask import Blueprint, current_app, request
@@ -111,9 +110,9 @@ class ClaimStoreResource(Resource):
             raise InvalidJSONData('JSON data is not valid', extra=str(e))
 
 
-class Subscription(ClaimStoreResource):
+class ClaimantResource(ClaimStoreResource):
 
-    """Register a new claimant in the database.
+    """Resource related to claimant subscription in the ClaimStore.
 
     This POST service expects JSON data following the JSON schema defined for
     claimants.
@@ -122,10 +121,62 @@ class Subscription(ClaimStoreResource):
     json_schema = 'claims.claimant'
 
     def post(self):
-        """Subscribe a new claimant.
+        """Register a new claimant in the ClaimStore.
 
-        Receives JSON data with all the information of a new claimant and it
-        stores it in the database.
+        .. http:post:: /subscribe
+
+            This resource is expecting JSON data with all the necessary
+            information of a new claimant.
+
+            **Request**:
+
+            .. sourcecode:: http
+
+                POST /subscribe HTTP/1.1
+                Content-Type: application/json
+                Host: localhost:5000
+
+                {
+                    "name": "INSPIRE",
+                    "url": "http://inspirehep.net"
+                }
+
+            :reqheader Content-Type: application/json
+            :json body: JSON with the information of the claimant. The JSON
+                        data should be valid according to the `JSON Schema for
+                        claimants <https://goo.gl/9ts8ov>`_.
+
+            **Responses**:
+
+            .. sourcecode:: http
+
+                HTTP/1.0 200 OK
+                Content-Length: 80
+                Content-Type: application/json
+
+                {
+                    "status": "success",
+                    "uuid": "ab19c98b-xxxx-xxxx-xxxx-1d6af3bf58b4"
+                }
+
+            .. sourcecode:: http
+
+                HTTP/1.0 400 BAD REQUEST
+                Content-Length: 95
+                Content-Type: application/json
+
+                {
+                    "extra": null,
+                    "message": "This claimant is already registered",
+                    "status": 400
+                }
+
+            :resheader Content-Type: application/json
+            :statuscode 200: no error - the claimant was subscribed
+            :statuscode 400: invalid request - problably a malformed JSON
+            :statuscode 403: access denied
+
+            .. see docs/users.rst for usage documenation.
         """
         json_data = request.get_json()
         self.validate_json(json_data)
@@ -159,7 +210,7 @@ class Subscription(ClaimStoreResource):
             raise InvalidRequest('This claimant is already registered')
 
 
-class ClaimsResource(ClaimStoreResource):
+class ClaimResource(ClaimStoreResource):
 
     """Resource that handles all claims-related requests."""
 
@@ -251,8 +302,78 @@ class ClaimsResource(ClaimStoreResource):
     def post(self):
         """Record a new claim.
 
-        This POST service expects JSON data following the JSON schema defined
-        for claims.
+        .. http:post:: /claims
+
+            This resource is expecting JSON data with all the necessary
+            information of a new claim.
+
+            **Request**:
+
+            .. sourcecode:: http
+
+                POST /claims HTTP/1.1
+                Accept: application/json
+                Content-Length: 336
+                Content-Type: application/json
+
+                {
+                    "arguments": {
+                        "actor": "CDS_submission",
+                        "human": 0
+                    },
+                    "certainty": 1.0,
+                    "claimant": "CDS",
+                    "created": "2015-03-25T11:00:00Z",
+                    "object": {
+                        "type": "CDS_REPORT_NUMBER",
+                        "value": "CMS-PAS-HIG-14-008"
+                    },
+                    "predicate": "is_same_as",
+                    "subject": {
+                        "type": "CDS_RECORD_ID",
+                        "value": "2003192"
+                    }
+                }
+
+            :reqheader Content-Type: application/json
+            :json body: JSON with the information of the claimt. The JSON
+                        data should be valid according to the `JSON Schema for
+                        claims <https://goo.gl/C1f6vw>`_.
+
+            **Responses**:
+
+            .. sourcecode:: http
+
+                HTTP/1.0 200 OK
+                Content-Length: 80
+                Content-Type: application/json
+
+                {
+                    "status": "success",
+                    "uuid": "fad4ec9f-0e95-4a22-b65c-d01f15aba6be"
+                }
+
+            .. sourcecode:: http
+
+                HTTP/1.0 400 BAD REQUEST
+                Content-Length: 9616
+                Content-Type: application/json
+                Date: Tue, 22 Sep 2015 09:02:25 GMT
+                Server: Werkzeug/0.10.4 Python/3.4.3
+
+                {
+                    "extra": "'claimant' is a required property. Failed
+                              validating 'required' in schema...",
+                    "message": "JSON data is not valid",
+                    "status": 400
+                }
+
+            :resheader Content-Type: application/json
+            :statuscode 200: no error - the claim was recorded
+            :statuscode 400: invalid request - problably a malformed JSON
+            :statuscode 403: access denied
+
+            .. see docs/users.rst for usage documenation.
         """
         json_data = request.get_json()
 
@@ -326,33 +447,111 @@ class ClaimsResource(ClaimStoreResource):
     def get(self):
         """GET service that returns the stored claims.
 
+        .. http:get:: /claims
 
-        Many arguments can be used in order to filter the output. Only AND
-        queries are preformed at the moment.
+            Returns a JSON list with all the claims matching the query
+            parameters.
 
-        List of arguments:
+            **Request**:
 
-        * since: datetime (YYYY-MM-DD) - it fetches claims that were created
-          from this given datetime.
-        * until: datetime (YYYY-MM-DD) - it fetches claims that were created
-          up to this given datetime.
-        * claimant: claimant's unique name - it fetches claims submitted by the
-          specified claimant.
-        * predicate: predicate's unique name - it finds claims using this
-          predicate (e.g. is_same_as).
-        * certainty: float number between 0 and 1.0. It will search for claims
-          with at least the specified certainty.
-        * human: enter 1 if searching for human-created claims, 0 for
-          algorithms and nothing in order to retrieve all.
-        * actor: it filters claims by their actor's name (one can use %).
-        * role: it filters claims by their actor's role (one can use %).
-        * type: it finds claims using a certain identifier type (either subject
-          or object). For instance: DOI.
-        * value: it fetches all the claims with that identifier value.
-        * subject: it fetches claims using a given identifier type as a subject
-          type.
-        * object: it fetches claims using a given identifier type as an object
-          type.
+                .. sourcecode:: http
+
+                    GET /claims?type=INSPIRE_RECORD_ID&value=cond-mat/9906097&
+                    recurse=1 HTTP/1.1
+                    Accept: */*
+                    Host: localhost:5000
+
+            :reqheader Content-Type: application/json
+            :query datetime since: it must have the format 'YYYY-MM-DD'. It
+                                   fetches claims that were created from this
+                                   given datetime.
+            :query datetime until:  it must have the format 'YYYY-MM-DD'. It
+                                    fetches claims that were created up to this
+                                    given datetime.
+            :query string claimant: claimant's unique name. It fetches claims
+                                    submitted by the specified claimant.
+            :query string predicate: predicate's unique name. It finds claims
+                                     using this predicate (e.g. is_same_as).
+            :query float certainty: float number between 0 and 1.0. It will
+                                    search for claims with at least the
+                                    specified certainty.
+            :query int human: enter 1 if searching for human-created claims, 0
+                              for algorithms and nothing in order to retrieve
+                              all.
+            :query string actor: it filters claims by their actor's name (one
+                                 can use `%`).
+            :query string role: it filters claims by their actor's role (one
+                                can use `%`).
+            :query string type: it finds claims using a certain identifier type
+                                (either subject or object). For instance: DOI.
+            :query string value: it fetches all the claims with that identifier
+                                 value.
+            :query boolean recurse: used in combination with `type` and `value`
+                                    will find all the equivalent identifiers to
+                                    the specified one.
+            :query string subject: it fetches claims using the given identifier
+                                   type as a subject type.
+            :query string object: it fetches claims using the given identifier
+                                  type as an object type.
+
+            **Response**:
+
+                .. sourcecode:: http
+
+                    HTTP/1.0 200 OK
+                    Content-Length: 1166
+                    Content-Type: application/json
+
+                    [
+                        {
+                            "arguments": {
+                                "actor": "CDS_submission",
+                                "human": 0
+                            },
+                            "certainty": 1.0,
+                            "claimant": "CDS",
+                            "created": "2015-03-25T11:00:00Z",
+                            "object": {
+                                "type": "CDS_REPORT_NUMBER",
+                                "value": "CMS-PAS-HIG-14-008"
+                            },
+                            "predicate": "is_same_as",
+                            "recieved": "2015-09-22T08:18:30.606912+00:00",
+                            "subject": {
+                                "type": "CDS_RECORD_ID",
+                                "value": "2003192"
+                            },
+                            "uuid": "44103ee2-0d87-47f9-b0e4-77673d297cdb"
+                        },
+                        {
+                            "arguments": {
+                                "actor": "John Doe",
+                                "human": 1,
+                                "role": "cataloguer"
+                            },
+                            "certainty": 0.5,
+                            "claimant": "INSPIRE",
+                            "created": "2015-05-25T11:00:00Z",
+                            "object": {
+                                "type": "CDS_RECORD_ID",
+                                "value": "2003192"
+                            },
+                            "predicate": "is_variant_of",
+                            "recieved": "2015-09-22T08:18:30.638933+00:00",
+                            "subject": {
+                                "type": "INSPIRE_RECORD_ID",
+                                "value": "cond-mat/9906097"
+                            },
+                            "uuid": "27689445-02b9-4d5d-8f9b-da21970e2352"
+                        }
+                    ]
+
+            :resheader Content-Type: application/json
+            :statuscode 200: no error
+            :statuscode 400: invalid request
+            :statuscode 403: access denied
+
+            .. see docs/users.rst for usage documenation.
         """
         args = self.get_claims_parser.parse_args()
         if all(x is None for x in args.values()):  # Avoid false positives (0)
@@ -465,7 +664,47 @@ class IdentifierResource(ClaimStoreResource):
     """Resource that handles Identifier requests."""
 
     def get(self):
-        """GET service that returns the stored identifiers."""
+        """GET service that returns the stored identifiers.
+
+        .. http:get:: /identifiers
+
+            Returns a JSON list with all the available identifiers.
+
+            **Request**:
+
+                .. sourcecode:: http
+
+                    GET /identifiers HTTP/1.1
+                    Accept: */*
+                    Host: localhost:5000
+
+            :reqheader Content-Type: application/json
+
+            **Response**:
+
+                .. sourcecode:: http
+
+                    HTTP/1.0 200 OK
+                    Content-Length: 147
+                    Content-Type: application/json
+
+                    [
+                        "ARXIV_ID",
+                        "CDS_AUTHOR_ID",
+                        "CDS_RECORD_ID",
+                        "CDS_REPORT_NUMBER",
+                        "DOI",
+                        "INSPIRE_AUTHOR_ID",
+                        "INSPIRE_RECORD_ID"
+                    ]
+
+            :resheader Content-Type: application/json
+            :statuscode 200: no error
+            :statuscode 400: invalid request
+            :statuscode 403: access denied
+
+            .. see docs/users.rst for usage documenation.
+        """
         id_types = IdentifierType.query.all()
         return [id_type.name for id_type in id_types]
 
@@ -475,7 +714,45 @@ class PredicateResource(ClaimStoreResource):
     """Resource that handles Predicate requests."""
 
     def get(self):
-        """GET service that returns the stored predicates."""
+        """GET service that returns all the available predicates.
+
+        .. http:get:: /predicates
+
+            Returns a JSON list with all the predicates.
+
+            **Request**:
+
+                .. sourcecode:: http
+
+                    GET /predicates HTTP/1.1
+                    Accept: */*
+                    Host: localhost:5000
+
+            :reqheader Content-Type: application/json
+
+            **Response**:
+
+                .. sourcecode:: http
+
+                    HTTP/1.0 200 OK
+                    Content-Length: 108
+                    Content-Type: application/json
+
+                    [
+                        "is_author_of",
+                        "is_contributor_to",
+                        "is_erratum_of",
+                        "is_same_as",
+                        "is_variant_of"
+                    ]
+
+            :resheader Content-Type: application/json
+            :statuscode 200: no error
+            :statuscode 400: invalid request
+            :statuscode 403: access denied
+
+            .. see docs/users.rst for usage documenation
+        """
         predicates = Predicate.query.all()
         return [pred.name for pred in predicates]
 
@@ -484,26 +761,76 @@ class EquivalentIdResource(ClaimStoreResource):
 
     """Resource that handles Equivalent Identifier requests."""
 
-    def __init__(self):
-        """Initialise Equivalent Identifier Resource."""
-        super(ClaimStoreResource, self).__init__()
-        self.get_eqids_parser = reqparse.RequestParser()
-        self.get_eqids_parser.add_argument(
-            'eqid', dest='eqid',
-            type=str, location='args',
-            help='Unique equivalent identifier',
-            trim=True
-        )
+    def get(self, eqid=None):
+        """GET service that returns all the stored Equivalent Identifiers.
 
-    def get(self):
-        """GET service that returns the stored Equivalent Identifiers."""
-        args = self.get_eqids_parser.parse_args()
-        if args.eqid:
-            try:
-                UUID(args.eqid)
-            except ValueError:
-                raise InvalidRequest('Badly formed EQID (uuid)')
-            eqids = EquivalentIdentifier.query.filter_by(eqid=args.eqid)
+        .. http:get:: /eqids/(uuid:eqid)
+
+            Returns all the type/value entries in the index grouped by their
+            equivalent identifiers.
+
+            **Requests**:
+
+                .. sourcecode:: http
+
+                    GET /eqids HTTP/1.1
+                    Accept: */*
+                    Host: localhost:5000
+
+                .. sourcecode:: http
+
+                    GET /eqids/0e64606e-68ce-482e-ad59-1e9981394f84 HTTP/1.1
+                    Accept: */*
+                    Host: localhost:5000
+
+            :reqheader Content-Type: application/json
+            :param eqid: query by a specific uuid which is shared by some
+                         equivalent identifiers
+
+            **Response**:
+
+                .. sourcecode:: http
+
+                    HTTP/1.0 200 OK
+                    Content-Length: 592
+                    Content-Type: application/json
+
+                    {
+                        "36dfb125-5c35-4d3a-870c-76eb4bad498e": [
+                            {
+                                "type": "ARXIV_ID",
+                                "value": "cond-mat/9906097"
+                            },
+                            {
+                                "type": "DOI",
+                                "value": "C10.1103/PhysRevE.62.7422"
+                            }
+                        ],
+                        "77c4a5eb-3ed8-4c80-ba0d-644d6bc397a3": [
+                            {
+                                "type": "CDS_RECORD_ID",
+                                "value": "2003192"
+                            },
+                            {
+                                "type": "CDS_REPORT_NUMBER",
+                                "value": "CMS-PAS-HIG-14-008"
+                            },
+                            {
+                                "type": "INSPIRE_RECORD_ID",
+                                "value": "cond-mat/9906097"
+                            }
+                        ]
+                    }
+
+            :resheader Content-Type: application/json
+            :statuscode 200: no error
+            :statuscode 400: invalid request - problably a malformed UUID
+            :statuscode 403: access denied
+
+            .. see docs/users.rst for usage documenation.
+        """
+        if eqid:
+            eqids = EquivalentIdentifier.query.filter_by(eqid=str(eqid))
         else:
             eqids = EquivalentIdentifier.query.all()
         output_dict = defaultdict(list)
@@ -515,10 +842,10 @@ class EquivalentIdResource(ClaimStoreResource):
         return output_dict
 
 
-claims_api.add_resource(Subscription,
+claims_api.add_resource(ClaimantResource,
                         '/subscribe',
                         endpoint='subscribe')
-claims_api.add_resource(ClaimsResource,
+claims_api.add_resource(ClaimResource,
                         '/claims',
                         endpoint='claims')
 claims_api.add_resource(IdentifierResource,
@@ -529,4 +856,5 @@ claims_api.add_resource(PredicateResource,
                         endpoint='predicates')
 claims_api.add_resource(EquivalentIdResource,
                         '/eqids',
+                        '/eqids/<uuid:eqid>',
                         endpoint='eqids')

@@ -110,7 +110,11 @@ setup(
     ],
     extras_require={
         'development': ['Flask-DebugToolbar'],
-        'docs': ['shpinx'],
+        'docs': [
+            'sphinx',
+            'sphinx_rtd_theme>=0.1.7',
+            'sphinxcontrib-httpdomain'
+        ],
         'tests': tests_require
     },
     tests_require=tests_require,

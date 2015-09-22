@@ -23,45 +23,19 @@ The driving idea behind ClaimStore is to offer a neutral micro-service
 that would be (1) storing claims that various collaborating services
 perform and (2) answering questions about claims.
 
-Description
-===========
+Table of contents
+=================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :numbered:
 
    description
-
-Design
-======
-
-.. toctree::
-   :maxdepth: 2
-
    design
-
-Releases
-========
-
-.. toctree::
-   :maxdepth: 2
-
    releases
-
-API
-===
-
-.. toctree::
-   :maxdepth: 2
-
-   api
-
-Developers
-==========
-
-.. toctree::
-   :maxdepth: 2
-
+   Users <users>
    developers
+   API <api/modules>
 
 Indices and tables
 ==================

@@ -59,12 +59,6 @@ def claimsubmit():
     )
 
 
-@views_bp.route('/api', methods=['GET'])
-def api():
-    """Render the API documenation page."""
-    return render_template("claims/api.html", active_menu='api')
-
-
 @views_bp.route('/contact', methods=['GET'])
 def contact():
     """Render the contact page."""
