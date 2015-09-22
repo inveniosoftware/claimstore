@@ -18,6 +18,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
+sphinx-apidoc -f -e -o docs/api/ claimstore
+if [ -n "$(git status -s)" ]; then
+  echo
+  echo "ERROR: there is a mismatch between sphinx-apidoc output and the actual content of docs/api/. Check 'git status'."
+  exit 1
+fi
 sphinx-build -qnNW docs docs/_build/html
 python setup.py test
 sphinx-build -qnNW -b doctest docs docs/_build/doctest

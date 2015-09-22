@@ -58,6 +58,9 @@ before_script:
   - travis_retry pip install kwalitee GitPython --pre  # needs recent pep257
   - kwalitee check message -s ${TRAVIS_COMMIT_RANGE}
   - travis_retry pip install pytest-pep257  # needs older pep257
+  - travis_retry pip install sphinx
+  - sphinx-apidoc -f -e -o docs/api/ claimstore
+  - if [ -n "$(git status -s)" ]; then echo "Mismatch between the output of sphinx-apidoc and the files in docs/api/*. Please, run 'sphinx-apidoc -f -e -o docs/api/ claimstore' and commit/push again." && exit 1; fi
 
 script:
   - python setup.py test
