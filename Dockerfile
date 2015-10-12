@@ -46,7 +46,7 @@ WORKDIR /code
 ADD . /code
 
 # Install ClaimStore:
-RUN pip install -e .
+RUN pip install -e .[tests]
 RUN claimstore collect
 
 # Run container as user `claimstore` with UID `1000`, which should match

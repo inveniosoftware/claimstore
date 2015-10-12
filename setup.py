@@ -36,6 +36,7 @@ class PyTest(TestCommand):
     def initialize_options(self):
         """Initialise options."""
         TestCommand.initialize_options(self)
+        self.pytest_args = []
         try:
             from ConfigParser import ConfigParser
         except ImportError:
@@ -54,9 +55,6 @@ class PyTest(TestCommand):
         """Run tests."""
         # import here, cause outside the eggs aren't loaded
         import pytest
-        import _pytest.config
-        pm = _pytest.config.get_plugin_manager()
-        pm.consider_setuptools_entrypoints()
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
@@ -69,12 +67,12 @@ version = g['__version__']
 
 tests_require = [
     'pytest-cache',
-    'pytest-cov',
+    'pytest-cov>=2.1.0',
     'pytest-isort',
     'pytest-pep8',
     'pytest-pep257',
-    'pytest',
-    'coverage',
+    'pytest>=2.8.0',
+    'coverage>=4.0.0',
     'webtest',
 ]
 
@@ -113,6 +111,7 @@ setup(
     extras_require={
         'development': ['Flask-DebugToolbar'],
         'docs': ['shpinx'],
+        'tests': tests_require
     },
     tests_require=tests_require,
     cmdclass={'test': PyTest},
