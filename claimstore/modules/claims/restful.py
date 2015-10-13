@@ -25,6 +25,7 @@ isort:skip_file
 
 from collections import defaultdict
 from functools import wraps
+from ipaddress import ip_address, ip_network
 
 import isodate  # noqa
 from flask import Blueprint, current_app, request
@@ -77,7 +78,11 @@ def check_ip(f):
     """
     @wraps(f)
     def inner(*args, **kwargs):
-        if request.remote_addr in current_app.config['CLAIMSTORE_ALLOWED_IPS']:
+        if any(
+                [ip_address(request.remote_addr) in ip_network(ip_net)
+                 for ip_net
+                 in current_app.config['CLAIMSTORE_ALLOWED_IPS']]
+        ):
             return f(*args, **kwargs)
         else:
             abort(
