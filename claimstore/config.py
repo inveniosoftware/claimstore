@@ -22,6 +22,7 @@
 
 import os
 
+# Flask-AppFactory configuration
 EXTENSIONS = [
     "flask_appfactory.ext.jinja2",
     "claimstore.ext.sqlalchemy",
@@ -32,11 +33,39 @@ PACKAGES = [
     "claimstore.modules.claims",
 ]
 
+
+# -----------------------------------------------------------------------------
+# GENERAL CONFIG
+# -----------------------------------------------------------------------------
+
+# Base directory
 BASE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
+if 'CLAIMSTORE_DEBUG' in os.environ:
+    CLAIMSTORE_DEBUG = os.environ['CLAIMSTORE_DEBUG'] == 'True'
+else:
+    CLAIMSTORE_DEBUG = False
+if 'CLAIMSTORE_HOST' in os.environ:
+    CLAIMSTORE_HOST = os.environ['CLAIMSTORE_HOST']
+else:
+    CLAIMSTORE_HOST = '0.0.0.0'
+if 'CLAIMSTORE_PORT' in os.environ:
+    CLAIMSTORE_PORT = int(os.environ['CLAIMSTORE_PORT'])
+else:
+    CLAIMSTORE_PORT = 5000
+
+
+# -----------------------------------------------------------------------------
+# DATABASE
+# -----------------------------------------------------------------------------
 
 # Define the database as environment variable
 if 'SQLALCHEMY_DATABASE_URI' in os.environ:
     SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
+
+
+# -----------------------------------------------------------------------------
+# SECURITY
+# -----------------------------------------------------------------------------
 
 # Define the IP networks (e.g. 146.16.0.0/16) that can use the RESTful API.
 # The list of IP networks should be separated by whitespaces.

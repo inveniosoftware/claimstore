@@ -26,7 +26,11 @@ from claimstore.app import create_app
 def main():
     """Create app and run server."""
     app = create_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(
+        host=app.config['CLAIMSTORE_HOST'],
+        port=app.config['CLAIMSTORE_PORT'],
+        debug=app.config['CLAIMSTORE_DEBUG']
+    )
 
 
 if __name__ == '__main__':
