@@ -24,7 +24,7 @@ FROM python:3.4
 # Install some prerequisites ahead of `setup.py` in order to profit
 # from the docker build cache:
 RUN pip install Flask \
-                Flask-AppFactory \
+                Flask-Cli \
                 Flask-Collect \
                 Flask-RESTful \
                 Flask-SQLAlchemy \

@@ -37,7 +37,7 @@ from claimstore.core.datetime import loc_date_utc
 from claimstore.core.exception import InvalidJSONData, InvalidRequest, \
     RestApiException
 from claimstore.core.json import validate_json
-from claimstore.ext.sqlalchemy import db
+from claimstore.app import db
 from claimstore.modules.claims.models import Claim, Claimant, \
     EquivalentIdentifier, IdentifierType, Predicate
 

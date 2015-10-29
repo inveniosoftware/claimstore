@@ -28,8 +28,8 @@ import pytest
 from flask import current_app
 from jsonschema import ValidationError
 
+from claimstore.app import db
 from claimstore.core.json import validate_json
-from claimstore.ext.sqlalchemy import db
 from claimstore.modules.claims.models import Predicate
 
 

@@ -22,7 +22,7 @@
 
 import pytest
 
-from claimstore.ext.sqlalchemy import db as db_
+from claimstore.app import db as db_
 
 
 @pytest.yield_fixture(scope='session')

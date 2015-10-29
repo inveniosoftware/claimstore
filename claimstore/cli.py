@@ -22,8 +22,44 @@
 
 from __future__ import absolute_import
 
-from flask_appfactory.cli import clifactory
+import click
+from flask_cli import FlaskGroup
+from flask_collect import Collect
 
 from claimstore.app import create_app
+from claimstore.modules.claims.cli import database_cli, eqid_cli
 
-cli = clifactory(create_app)
+
+def clifactory():
+    """Create a click CLI application based on configuration.
+
+    :param create_app: Flask application factory function.
+    """
+    # Create application object without loading the full application.
+    app = create_app()
+
+    def create_cli_app(info):
+        return app
+
+    @click.group(cls=FlaskGroup, create_app=create_cli_app)
+    def cli(**params):
+        pass
+
+    # Register CLI modules from packages.
+    cli.add_command(database_cli)
+    cli.add_command(eqid_cli)
+
+    # Collect
+    app.config.setdefault('COLLECT_STATIC_ROOT', app.static_folder)
+    app.config.setdefault('COLLECT_STORAGE', 'flask_collect.storage.link')
+    collect = Collect(app)
+
+    @cli.command('collect')
+    def collect_cli():
+        """Collect static files."""
+        collect.collect(verbose=True)
+
+    return cli
+
+
+cli = clifactory()

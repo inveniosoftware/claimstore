@@ -20,10 +20,12 @@
 
 """Flask app creation."""
 
-from flask import jsonify, render_template, request
-from flask_appfactory import appfactory
+from flask import Flask, jsonify, render_template, request
+from flask.ext.sqlalchemy import SQLAlchemy
 
 from claimstore.core.exception import RestApiException
+
+db = SQLAlchemy()
 
 
 def handle_restful_exceptions(error):
@@ -33,14 +35,22 @@ def handle_restful_exceptions(error):
     return response
 
 
-def create_app(load=True, **kwargs_config):
+def create_app():
     """Create Flask app using the factory."""
-    app = appfactory(
-        "claimstore",
-        "claimstore.config",
-        load=load,
-        **kwargs_config
-    )
+    app = Flask(__name__)
+
+    # Configuration
+    app.config.from_object('claimstore.config')
+    app.config.from_object('claimstore.modules.claims.config')
+
+    # Blueprints
+    from claimstore.modules.claims.restful import blueprint as restful_bp
+    from claimstore.modules.claims.views import blueprint as views_bp
+    app.register_blueprint(restful_bp)
+    app.register_blueprint(views_bp)
+
+    # Database
+    db.init_app(app)
 
     # Register exceptions
     app.register_error_handler(RestApiException, handle_restful_exceptions)

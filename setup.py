@@ -99,7 +99,7 @@ setup(
     },
     install_requires=[
         'Flask',
-        'Flask-AppFactory',
+        'Flask-Cli',
         'Flask-Collect',
         'Flask-RESTful',
         'Flask-SQLAlchemy',

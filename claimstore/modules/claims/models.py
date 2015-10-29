@@ -26,9 +26,9 @@ from flask import current_app
 from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
+from claimstore.app import db
 from claimstore.core.datetime import now_utc
 from claimstore.core.db.types import UTCDateTime
-from claimstore.ext.sqlalchemy import db
 
 
 class Claim(db.Model):

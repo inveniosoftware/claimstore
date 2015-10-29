@@ -25,12 +25,19 @@ from pathlib import Path
 import click
 from flask_cli import with_appcontext
 
-from claimstore.ext.sqlalchemy import database_cli, db
+from claimstore.app import db
 from claimstore.modules.claims.fixtures.claim import load_all_claims
 from claimstore.modules.claims.fixtures.claimant import load_all_claimants
 from claimstore.modules.claims.fixtures.pid import load_all_pids
 from claimstore.modules.claims.fixtures.predicate import load_all_predicates
 from claimstore.modules.claims.models import EquivalentIdentifier
+
+
+@click.group('database')
+@with_appcontext
+def database_cli():
+    """Database related commands."""
+    pass
 
 
 @database_cli.command()
@@ -142,6 +149,3 @@ def reindex():
         click.echo('Index rebuilt.')
     else:
         click.echo('Command aborted')
-
-
-commands = [eqid_cli]

@@ -22,18 +22,6 @@
 
 import os
 
-# Flask-AppFactory configuration
-EXTENSIONS = [
-    "flask_appfactory.ext.jinja2",
-    "claimstore.ext.sqlalchemy",
-    "claimstore.ext.collect"
-]
-
-PACKAGES = [
-    "claimstore.modules.claims",
-]
-
-
 # -----------------------------------------------------------------------------
 # GENERAL CONFIG
 # -----------------------------------------------------------------------------

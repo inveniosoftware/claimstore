@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
 
     claimstore.core
-    claimstore.ext
     claimstore.modules
 
 Submodules
