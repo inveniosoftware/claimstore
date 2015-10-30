@@ -1,0 +1,25 @@
+{
+  "name": "claimstore",
+  "homepage": "https://github.com/inveniosoftware/claimstore",
+  "authors": [
+    "Jose Benito Gonzalez Lopez <jose.benito.gonzalez@cern.ch>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "GPLv3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "json-editor": "~0.7.23",
+    "bootstrap3-typeahead": "~3.1.1",
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.5",
+    "font-awesome": "~4.4.0"
+  }
+}

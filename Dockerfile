@@ -45,15 +45,34 @@ RUN pip install Flask \
 WORKDIR /code
 ADD . /code
 
+# nodejs, detects distribution and adds the right repo
+RUN apt-get update && \
+    apt-get -qy install --fix-missing --no-install-recommends \
+        curl \
+        && \
+    curl -sL https://deb.nodesource.com/setup_4.x | bash -
+
+# nodejs
+RUN apt-get update && \
+    apt-get -qy upgrade --fix-missing --no-install-recommends && \
+    apt-get -qy install --fix-missing --no-install-recommends \
+    nodejs
+
+
 # Install ClaimStore:
 RUN pip install -e .[tests]
 RUN pip install -e .[docs]
-RUN claimstore collect
+RUN npm update && \
+    npm install --silent -g bower
 
 # Run container as user `claimstore` with UID `1000`, which should match
 # current host user in most situations:
 RUN adduser --uid 1000 --disabled-password --gecos '' claimstore && \
     chown -R claimstore:claimstore /code
+
+USER claimstore
+RUN bower install
+RUN claimstore collect
 
 # Start ClaimStore application:
 USER claimstore
