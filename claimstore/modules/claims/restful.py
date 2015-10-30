@@ -385,10 +385,13 @@ class ClaimResource(ClaimStoreResource):
         self.validate_json(json_data)
 
         try:
+            if not json_data['created'].endswith('Z'):
+                raise InvalidJSONData('Claim\'s `creation datetime` must have '
+                                      'timezone information and must be UTC')
             created_dt = isodate.parse_datetime(json_data['created'])
         except isodate.ISO8601Error as e:
             raise InvalidJSONData(
-                'Claim `created` datetime does not follow ISO 8601 Z',
+                'Claim\'s `creation datetime` does not follow ISO 8601 Z',
                 extra=str(e)
             )
 
