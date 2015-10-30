@@ -23,6 +23,7 @@
 from flask import Blueprint, render_template
 
 from claimstore.core.json import get_json_schema
+from claimstore.modules.claims.models import IdentifierType
 
 blueprint = Blueprint(
     'claims_views',
@@ -50,9 +51,11 @@ def subscription():
 @blueprint.route('/claimsubmit', methods=['GET'])
 def claimsubmit():
     """Render the claim submission form page."""
+    id_types = IdentifierType.query.all()
     return render_template(
         "claims/claim_submit.html",
-        json_schema=get_json_schema('claims.claim')
+        json_schema=get_json_schema('claims.claim'),
+        identifiersJson=[id_type.name for id_type in id_types]
     )
 
 

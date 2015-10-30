@@ -70,20 +70,23 @@
     });
 
     $("input[name^=root\\[][name$=\\]\\[type\\]]").typeahead({
-      source: function(query, process) {
-        jQuery.ajax({
-          url: '{{ url_for("claims_restful.identifiers") }}',
-          type: 'GET',
-          dataType: 'json',
-          success: function(json){
-            process(json);
-          }
-        });
-      },
+      source: {{ identifiersJson|safe }},
       matcher: function(param) {
         return true;
+      },
+      updater: function(item){
+        // Hack to force the update in jsoneditor.js which is not done by typeahead
+        var editorName;
+        if (this.$element[0].name.indexOf('subject') > -1) {
+          editorName = 'root.subject.type';
+        } else {
+          editorName = 'root.object.type';
+        }
+        editor.getEditor(editorName).setValue(item);
+        return item;
       }
     });
+
 
   </script>
 
