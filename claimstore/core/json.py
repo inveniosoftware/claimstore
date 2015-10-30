@@ -72,10 +72,7 @@ def validate_json(json_input, schema):
                 current_app.config['BASE_DIR'],
                 'claimstore',
                 'modules',
-                module_name,
-                'static',
-                'json',
-                'schemas'
+                module_name
             )
         ).as_uri()),
         schema_content

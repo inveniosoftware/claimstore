@@ -39,6 +39,7 @@
         schema: {{ json_schema|safe }},
         theme: 'bootstrap3',
         iconlib: 'bootstrap3',
+        ajax: true,
         disable_edit_json: true,
         disable_properties: true,
         disable_collapse: true,
@@ -66,6 +67,11 @@
       } else {
         alert('All fields are mandatory. Please, fill them all.');
       }
+    })
+
+    editor.on('ready',function() {
+      // Now the api methods will be available
+      editor.validate();
     });
 
   </script>
