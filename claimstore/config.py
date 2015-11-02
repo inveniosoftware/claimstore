@@ -61,4 +61,4 @@ if 'CLAIMSTORE_ALLOWED_IPS' in os.environ and \
         os.environ['CLAIMSTORE_ALLOWED_IPS'].strip():
     CLAIMSTORE_ALLOWED_IPS = os.environ['CLAIMSTORE_ALLOWED_IPS'].split(' ')
 else:
-    CLAIMSTORE_ALLOWED_IPS = ['127.0.0.1/32']
+    CLAIMSTORE_ALLOWED_IPS = ['0.0.0.0/0']
