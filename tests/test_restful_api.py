@@ -18,17 +18,17 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""claimstore.modules.claims.restful test suite."""
+"""claimstore.restful test suite."""
 
 import pytest
 
-from claimstore.modules.claims.fixtures.decorator import populate_all
+from claimstore.testing.fixtures.decorator import populate_all
 
 pytest_plugins = (
-    'claimstore.modules.claims.fixtures.claim',
-    'claimstore.modules.claims.fixtures.claimant',
-    'claimstore.modules.claims.fixtures.pid',
-    'claimstore.modules.claims.fixtures.predicate'
+    'claimstore.testing.fixtures.claim',
+    'claimstore.testing.fixtures.claimant',
+    'claimstore.testing.fixtures.pid',
+    'claimstore.testing.fixtures.predicate'
 )
 
 

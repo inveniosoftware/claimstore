@@ -23,7 +23,7 @@
 from flask import Blueprint, render_template
 
 from claimstore.core.json import get_json_schema
-from claimstore.modules.claims.models import IdentifierType
+from claimstore.models import IdentifierType
 
 blueprint = Blueprint(
     'claims_views',
@@ -36,14 +36,14 @@ blueprint = Blueprint(
 @blueprint.route('/', methods=['GET'])
 def index():
     """Render the home page for ClaimStore."""
-    return render_template('claims/cover.html', active_menu='home')
+    return render_template('cover.html', active_menu='home')
 
 
 @blueprint.route('/subscription', methods=['GET'])
 def subscription():
     """Render the subscription form page."""
     return render_template(
-        "claims/subscription.html",
+        "subscription.html",
         json_schema=get_json_schema('claims.claimant')
     )
 
@@ -53,7 +53,7 @@ def claimsubmit():
     """Render the claim submission form page."""
     id_types = IdentifierType.query.all()
     return render_template(
-        "claims/claim_submit.html",
+        "claim_submit.html",
         json_schema=get_json_schema('claims.claim'),
         identifiersJson=[id_type.name for id_type in id_types]
     )
@@ -62,4 +62,4 @@ def claimsubmit():
 @blueprint.route('/contact', methods=['GET'])
 def contact():
     """Render the contact page."""
-    return render_template("claims/contact.html", active_menu='contact')
+    return render_template("contact.html", active_menu='contact')

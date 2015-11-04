@@ -25,16 +25,15 @@ from copy import deepcopy
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
 
-from claimstore.modules.claims.fixtures.decorator import \
+from claimstore.models import EquivalentIdentifier, IdentifierType
+from claimstore.testing.fixtures.decorator import \
     populate_all_and_dummy_claimant
-from claimstore.modules.claims.models import EquivalentIdentifier, \
-    IdentifierType
 
 pytest_plugins = (
-    'claimstore.modules.claims.fixtures.claim',
-    'claimstore.modules.claims.fixtures.claimant',
-    'claimstore.modules.claims.fixtures.pid',
-    'claimstore.modules.claims.fixtures.predicate'
+    'claimstore.testing.fixtures.claim',
+    'claimstore.testing.fixtures.claimant',
+    'claimstore.testing.fixtures.pid',
+    'claimstore.testing.fixtures.predicate'
 )
 
 

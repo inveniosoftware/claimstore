@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
 
     claimstore.core
-    claimstore.modules
 
 Submodules
 ----------
@@ -17,7 +16,10 @@ Submodules
    claimstore.app
    claimstore.cli
    claimstore.config
+   claimstore.models
+   claimstore.restful
    claimstore.version
+   claimstore.views
    claimstore.wsgi
 
 Module contents

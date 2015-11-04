@@ -41,11 +41,10 @@ def create_app():
 
     # Configuration
     app.config.from_object('claimstore.config')
-    app.config.from_object('claimstore.modules.claims.config')
 
     # Blueprints
-    from claimstore.modules.claims.restful import blueprint as restful_bp
-    from claimstore.modules.claims.views import blueprint as views_bp
+    from claimstore.restful import blueprint as restful_bp
+    from claimstore.views import blueprint as views_bp
     app.register_blueprint(restful_bp)
     app.register_blueprint(views_bp)
 
@@ -61,6 +60,6 @@ def create_app():
             return jsonify({
                 'status': 'error',
                 'message': 'Resource not found.'}), 404
-        return render_template('claims/404.html'), 404
+        return render_template('404.html'), 404
 
     return app

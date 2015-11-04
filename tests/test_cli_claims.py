@@ -20,8 +20,8 @@
 
 """Test click commands for claims module."""
 
-from claimstore.modules.claims import cli
-from claimstore.modules.claims.fixtures.decorator import populate_all
+from claimstore import cli
+from claimstore.testing.fixtures.decorator import populate_all
 
 
 def test_database_create(cli_runner, db):

@@ -30,7 +30,7 @@ from jsonschema import ValidationError
 
 from claimstore.app import db
 from claimstore.core.json import validate_json
-from claimstore.modules.claims.models import IdentifierType
+from claimstore.models import IdentifierType
 
 
 def create_pid(pid_json):

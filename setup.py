@@ -100,7 +100,6 @@ setup(
     install_requires=[
         'Flask',
         'Flask-Cli',
-        'Flask-Collect',
         'Flask-RESTful',
         'Flask-SQLAlchemy',
         'isodate',

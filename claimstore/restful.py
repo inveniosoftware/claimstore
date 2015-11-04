@@ -38,7 +38,7 @@ from claimstore.core.exception import InvalidJSONData, InvalidRequest, \
     RestApiException
 from claimstore.core.json import validate_json
 from claimstore.app import db
-from claimstore.modules.claims.models import Claim, Claimant, \
+from claimstore.models import Claim, Claimant, \
     EquivalentIdentifier, IdentifierType, Predicate
 
 blueprint = Blueprint(

@@ -17,12 +17,11 @@ Using command line
 .. code-block:: console
 
    $ mkvirtualenv claimstore --python=$(which python3.4)
-   $ apt-get install npm  # install nodejs
-   $ npm install -g bower
-   $ pip install -e.[tests,docs].
+   $ sudo apt-get install npm  # install nodejs
+   $ sudo npm install -g bower
+   $ pip install -e .[tests,docs]
    $ bower install
-   $ claimstore collect
-   $ export SQLALCHEMY_DATABASE_URI=postgres://postgres:postgres@db:5432/postgres  # replace with your database URI
+   $ export SQLALCHEMY_DATABASE_URI=postgres://postgres:postgres@db:5432/postgres
    $ claimstore database create
    $ claimstore database populate  # optional
    $ python setup.py test

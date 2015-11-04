@@ -30,7 +30,7 @@ from jsonschema import ValidationError
 
 from claimstore.app import db
 from claimstore.core.json import validate_json
-from claimstore.modules.claims.models import Predicate
+from claimstore.models import Predicate
 
 
 def create_predicate(pred_json):

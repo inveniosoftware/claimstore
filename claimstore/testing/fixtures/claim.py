@@ -28,7 +28,7 @@ import pytest
 from flask import current_app
 from webtest import TestApp
 
-from claimstore.modules.claims.models import Claim
+from claimstore.models import Claim
 
 
 def load_all_claims(test_app=None, config_path=None):

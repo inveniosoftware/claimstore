@@ -62,3 +62,10 @@ if 'CLAIMSTORE_ALLOWED_IPS' in os.environ and \
     CLAIMSTORE_ALLOWED_IPS = os.environ['CLAIMSTORE_ALLOWED_IPS'].split(' ')
 else:
     CLAIMSTORE_ALLOWED_IPS = ['0.0.0.0/0']
+
+
+# -----------------------------------------------------------------------------
+# CLAIMS
+# -----------------------------------------------------------------------------
+
+CFG_EQUIVALENT_PREDICATES = ['is_same_as', 'is_variant_of']

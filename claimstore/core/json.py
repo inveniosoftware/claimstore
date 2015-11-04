@@ -42,8 +42,6 @@ def get_json_schema(schema):
     schema_file_path = os.path.join(
         current_app.config['BASE_DIR'],
         'claimstore',
-        'modules',
-        module_name,
         'static',
         'json',
         'schemas',
@@ -65,14 +63,11 @@ def validate_json(json_input, schema):
     :raises: :exc:`ValidationError` if the instance is invalid.
     """
     schema_content = get_json_schema(schema)
-    module_name, schema_name = schema.split('.')
     resolver = jsonschema.RefResolver('{}/'.format(
         pathlib.Path(
             os.path.join(
                 current_app.config['BASE_DIR'],
-                'claimstore',
-                'modules',
-                module_name
+                'claimstore'
             )
         ).as_uri()),
         schema_content

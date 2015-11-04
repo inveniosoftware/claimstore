@@ -18,13 +18,21 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends "claims/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 
-<div>
-  <h1>Contact</h1>
-  <p class="lead">To be done</p>
+<div class="cover-content">
+  <h1>ClaimStore</h1>
+  <h4>Beta demo</h4>
+  <p class="lead">A new proposed mini service that permits to exchange information about information claims within a set of collaborating heterogeneous information services. A primary use case example is the exchange of information about
+persistent identifiers (such as DOI) in the domain of astrophysics and
+particle physics.</p>
+  <p class="lead">
+    <a href="{{ url_for('claims_views.subscription') }}" class="btn btn-lg btn-default">Subscribe</a>
+    <a href="{{ url_for('claims_views.claimsubmit') }}" class="btn btn-lg btn-default">Submit claim</a>
+    <a href="{{ url_for('claims_restful.claims') }}" class="btn btn-lg btn-default">List claims</a>
+  </p>
 </div>
 
 {% endblock %}

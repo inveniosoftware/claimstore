@@ -6,7 +6,7 @@ Restful Resources
 Subscribe to ClaimStore
 =======================
 
-.. autosimple:: claimstore.modules.claims.restful.ClaimantResource.post
+.. autosimple:: claimstore.restful.ClaimantResource.post
 
 **Usage**:
 
@@ -42,7 +42,7 @@ Subscribe to ClaimStore
 Submit a claim
 ==============
 
-.. autosimple:: claimstore.modules.claims.restful.ClaimResource.post
+.. autosimple:: claimstore.restful.ClaimResource.post
 
 **Usage**:
 
@@ -77,7 +77,7 @@ Submit a claim
 List claims
 ===========
 
-.. autosimple:: claimstore.modules.claims.restful.ClaimResource.get
+.. autosimple:: claimstore.restful.ClaimResource.get
 
 **Usage**:
 
@@ -105,7 +105,7 @@ List claims
 List identifiers
 ================
 
-.. autosimple:: claimstore.modules.claims.restful.IdentifierResource.get
+.. autosimple:: claimstore.restful.IdentifierResource.get
 
 **Usage**:
 
@@ -133,7 +133,7 @@ List identifiers
 List predicates
 ===============
 
-.. autosimple:: claimstore.modules.claims.restful.PredicateResource.get
+.. autosimple:: claimstore.restful.PredicateResource.get
 
 **Usage**:
 
@@ -161,7 +161,7 @@ List predicates
 List equivalent identifiers
 ===========================
 
-.. autosimple:: claimstore.modules.claims.restful.EquivalentIdResource.get
+.. autosimple:: claimstore.restful.EquivalentIdResource.get
 
 **Usage**:
 

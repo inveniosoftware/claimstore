@@ -25,7 +25,6 @@ FROM python:3.4
 # from the docker build cache:
 RUN pip install Flask \
                 Flask-Cli \
-                Flask-Collect \
                 Flask-RESTful \
                 Flask-SQLAlchemy \
                 isodate \
@@ -72,7 +71,6 @@ RUN adduser --uid 1000 --disabled-password --gecos '' claimstore && \
 
 USER claimstore
 RUN bower install
-RUN claimstore collect
 
 # Start ClaimStore application:
 USER claimstore

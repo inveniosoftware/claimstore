@@ -18,12 +18,12 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends "claims/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 
   <div id="submission_form_holder"></div>
-  <button id="submit" class="btn btn-success" type="submit">Subscribe</button>
+  <button id="submit" class="btn btn-success" type="submit">Submit</button>
 
 {% endblock %}
 
@@ -31,6 +31,7 @@
 
   {{ super() }}
 
+  <script src="{{ url_for('static', filename='vendors/bootstrap3-typeahead/bootstrap3-typeahead.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/json-editor/dist/jsoneditor.min.js') }}"></script>
 
   <script>
@@ -39,7 +40,6 @@
         schema: {{ json_schema|safe }},
         theme: 'bootstrap3',
         iconlib: 'bootstrap3',
-        ajax: true,
         disable_edit_json: true,
         disable_properties: true,
         disable_collapse: true,
@@ -52,7 +52,7 @@
       if(!errors.length) {
         $.ajax({
           type: 'POST',
-          url: '{{ url_for("claims_restful.subscribe") }}',
+          url: '{{ url_for("claims_restful.claims") }}',
           data: JSON.stringify(editor.getValue()),
           contentType: "application/json; charset=utf-8",
           dataType: "json",
@@ -67,12 +67,26 @@
       } else {
         alert('All fields are mandatory. Please, fill them all.');
       }
-    })
-
-    editor.on('ready',function() {
-      // Now the api methods will be available
-      editor.validate();
     });
+
+    $("input[name^=root\\[][name$=\\]\\[type\\]]").typeahead({
+      source: {{ identifiersJson|safe }},
+      matcher: function(param) {
+        return true;
+      },
+      updater: function(item){
+        // Hack to force the update in jsoneditor.js which is not done by typeahead
+        var editorName;
+        if (this.$element[0].name.indexOf('subject') > -1) {
+          editorName = 'root.subject.type';
+        } else {
+          editorName = 'root.object.type';
+        }
+        editor.getEditor(editorName).setValue(item);
+        return item;
+      }
+    });
+
 
   </script>
 
