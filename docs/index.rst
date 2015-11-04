@@ -30,6 +30,7 @@ Table of contents
    :maxdepth: 1
    :numbered:
 
+   installation
    description
    design
    releases
