@@ -30,6 +30,9 @@ Using Docker
 .. code-block:: console
 
    $ docker-compose build
+   $ docker-compose run --rm web bower install
+   $ docker-compose run --rm web claimstore database create
+   $ docker-compose run --rm web claimstore database populate  # optional
    $ docker-compose run --rm web /code/run-tests.sh
    $ docker-compose up
 

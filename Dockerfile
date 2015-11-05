@@ -40,38 +40,26 @@ RUN pip install Flask \
                 sphinx \
                 webtest
 
-# Add sources to `code` and work there:
+# Install Node.js:
+RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
+RUN apt-get -y install nodejs
+
+# Install bower:
+RUN npm update && \
+    npm install --silent -g bower
+
+# Add ClaimStore sources to `code` and work there:
 WORKDIR /code
 ADD . /code
 
-# nodejs, detects distribution and adds the right repo
-RUN apt-get update && \
-    apt-get -qy install --fix-missing --no-install-recommends \
-        curl \
-        && \
-    curl -sL https://deb.nodesource.com/setup_4.x | bash -
-
-# nodejs
-RUN apt-get update && \
-    apt-get -qy upgrade --fix-missing --no-install-recommends && \
-    apt-get -qy install --fix-missing --no-install-recommends \
-    nodejs
-
-
 # Install ClaimStore:
-RUN pip install -e .[tests]
-RUN pip install -e .[docs]
-RUN npm update && \
-    npm install --silent -g bower
+RUN pip install -e .[docs,tests]
 
 # Run container as user `claimstore` with UID `1000`, which should match
 # current host user in most situations:
 RUN adduser --uid 1000 --disabled-password --gecos '' claimstore && \
     chown -R claimstore:claimstore /code
-
 USER claimstore
-RUN bower install
 
-# Start ClaimStore application:
-USER claimstore
-CMD  ["python", "run.py"]
+# Start the ClaimStore application:
+CMD ["python", "run.py"]

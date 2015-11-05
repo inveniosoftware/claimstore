@@ -20,7 +20,7 @@
 
 web:
   build: .
-  command: bash -c "claimstore database create && claimstore database populate && python run.py"
+  command: python run.py
   environment:
     - SQLALCHEMY_DATABASE_URI=postgres://postgres:postgres@db:5432/postgres
   ports:
