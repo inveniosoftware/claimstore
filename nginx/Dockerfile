@@ -18,25 +18,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-web:
-  build: .
-  command: python run.py
-  environment:
-    - SQLALCHEMY_DATABASE_URI=postgres://postgres:postgres@db:5432/postgres
-    - CLAIMSTORE_DEBUG=True
-  ports:
-    - "5000:5000"
-  volumes:
-    - .:/code
-  links:
-    - db
-db:
-  image: postgres
-  volumes_from:
-    - data
-data:
-  image: postgres
-  command: /bin/true
-  restart: "no"
-  volumes:
-    - /var/lib/postgresql
+FROM nginx
+RUN rm /etc/nginx/conf.d/default.conf
+ADD claimstore.conf /etc/nginx/conf.d/

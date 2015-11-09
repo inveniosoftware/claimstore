@@ -19,24 +19,42 @@
 # USA.
 
 web:
+  restart: "always"
   build: .
   command: python run.py
   environment:
     - SQLALCHEMY_DATABASE_URI=postgres://postgres:postgres@db:5432/postgres
-    - CLAIMSTORE_DEBUG=True
+    - CLAIMSTORE_DEBUG=False
   ports:
     - "5000:5000"
-  volumes:
-    - .:/code
+  volumes_from:
+    - static
   links:
     - db
+nginx:
+  restart: "always"
+  build: ./nginx
+  ports:
+    - "80:80"
+  volumes_from:
+    - static
+    - web
+  links:
+    - web
+static:
+  restart: "no"
+  build: .
+  volumes:
+    - /code/claimstore/static
+  user: claimstore
 db:
+  restart: "always"
   image: postgres
   volumes_from:
     - data
 data:
+  restart: "no"
   image: postgres
   command: /bin/true
-  restart: "no"
   volumes:
     - /var/lib/postgresql
