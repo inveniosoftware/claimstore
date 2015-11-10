@@ -10,7 +10,7 @@ Subscribe to ClaimStore
 
 **Usage**:
 
-* From python:
+* From `python <https://www.python.org/>`_:
 
     .. sourcecode:: python
 
@@ -27,15 +27,17 @@ Subscribe to ClaimStore
 
 * From `httpie <https://github.com/jkbrzt/httpie>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $http POST http://localhost:5000/subscribe < tests/myclaimstore/config/claimants/cds.json
+        $ http POST http://localhost:5000/subscribe < tests/myclaimstore/config/claimants/cds.json
 
-* From cURL:
+* From `curl <http://curl.haxx.se/>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $curl http://localhost:5000/subscribe -H "Content-Type: application/json" -d @tests/myclaimstore/config/claimants/inspire.json -X POST -v
+        $ curl http://localhost:5000/subscribe \
+               -H "Content-Type: application/json" \
+               -d @tests/myclaimstore/config/claimants/inspire.json -X POST -v
 
 
 
@@ -46,7 +48,7 @@ Submit a claim
 
 **Usage**:
 
-* From python:
+* From `python <https://www.python.org/>`_:
 
     .. sourcecode:: python
 
@@ -63,15 +65,17 @@ Submit a claim
 
 * From `httpie <https://github.com/jkbrzt/httpie>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $http POST http://localhost:5000/claims < tests/myclaimstore/data/claims/cds.1.json
+        $ http POST http://localhost:5000/claims < tests/myclaimstore/data/claims/cds.1.json
 
-* From cURL:
+* From `curl <http://curl.haxx.se/>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $curl http://localhost:5000/claims -H "Content-Type: application/json" -d @tests/myclaimstore/data/claims/inspire.1.json -X POST -v
+        $ curl http://localhost:5000/claims \
+               -H "Content-Type: application/json" \
+               -d @tests/myclaimstore/data/claims/inspire.1.json -X POST -v
 
 
 List claims
@@ -81,7 +85,7 @@ List claims
 
 **Usage**:
 
-* From python:
+* From `python <https://www.python.org/>`_:
 
     .. sourcecode:: python
 
@@ -91,15 +95,15 @@ List claims
 
 * From `httpie <https://github.com/jkbrzt/httpie>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $http GET http://localhost:5000/claims
+        $ http GET http://localhost:5000/claims
 
-* From cURL:
+* From `curl <http://curl.haxx.se/>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $curl http://localhost:5000/claims
+        $ curl http://localhost:5000/claims
 
 
 List identifiers
@@ -109,7 +113,7 @@ List identifiers
 
 **Usage**:
 
-* From python:
+* From `python <https://www.python.org/>`_:
 
     .. sourcecode:: python
 
@@ -119,15 +123,15 @@ List identifiers
 
 * From `httpie <https://github.com/jkbrzt/httpie>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $http GET http://localhost:5000/identifiers
+        $ http GET http://localhost:5000/identifiers
 
-* From cURL:
+* From `curl <http://curl.haxx.se/>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $curl http://localhost:5000/identifiers
+        $ curl http://localhost:5000/identifiers
 
 
 List predicates
@@ -137,7 +141,7 @@ List predicates
 
 **Usage**:
 
-* From python:
+* From `python <https://www.python.org/>`_:
 
     .. sourcecode:: python
 
@@ -147,15 +151,15 @@ List predicates
 
 * From `httpie <https://github.com/jkbrzt/httpie>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $http GET http://localhost:5000/predicates
+        $ http GET http://localhost:5000/predicates
 
-* From cURL:
+* From `curl <http://curl.haxx.se/>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $curl http://localhost:5000/predicates
+        $ curl http://localhost:5000/predicates
 
 
 List equivalent identifiers
@@ -165,7 +169,7 @@ List equivalent identifiers
 
 **Usage**:
 
-* From python:
+* From `python <https://www.python.org/>`_:
 
     .. sourcecode:: python
 
@@ -175,14 +179,12 @@ List equivalent identifiers
 
 * From `httpie <https://github.com/jkbrzt/httpie>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $http GET http://localhost:5000/eqids
+        $ http GET http://localhost:5000/eqids
 
-* From cURL:
+* From `curl <http://curl.haxx.se/>`_:
 
-    .. sourcecode:: bash
+    .. sourcecode:: console
 
-        $curl http://localhost:5000/eqids
-
-
+        $ curl http://localhost:5000/eqids
