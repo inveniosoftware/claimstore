@@ -18,10 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
 # USA.
 
-"""Restful resources for the claims module.
-
-isort:skip_file
-"""
+"""Restful resources for the claims module."""
 
 from collections import defaultdict
 from functools import wraps
@@ -33,13 +30,13 @@ from flask_restful import Api, Resource, abort, inputs, reqparse
 from jsonschema import ValidationError
 from sqlalchemy import and_, or_
 
+from claimstore.app import db
 from claimstore.core.datetime import loc_date_utc
 from claimstore.core.exception import InvalidJSONData, InvalidRequest, \
     RestApiException
 from claimstore.core.json import validate_json
-from claimstore.app import db
-from claimstore.models import Claim, Claimant, \
-    EquivalentIdentifier, IdentifierType, Predicate
+from claimstore.models import Claim, Claimant, EquivalentIdentifier, \
+    IdentifierType, Predicate
 
 blueprint = Blueprint(
     'claims_restful',
