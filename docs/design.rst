@@ -11,9 +11,6 @@ Architecture
 ClaimStore is an independent mini-application built upon our usual
 Flask ecosystem:
 
-- `Flask-AppFactory
-  <https://github.com/inveniosoftware/flask-appfactory>`_ for general
-  application loading
 - `Flask-RESTful
   <https://github.com/flask-restful/flask-restful/>`_ for REST API
 - `Flask-Notifications
