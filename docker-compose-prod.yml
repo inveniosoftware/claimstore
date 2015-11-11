@@ -38,7 +38,6 @@ nginx:
     - "80:80"
   volumes_from:
     - static
-    - web
   links:
     - web
 static:
