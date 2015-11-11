@@ -24,7 +24,7 @@ import json
 import os
 import pathlib
 
-import jsonschema  # noqa (pytest-isort is happy, flake8 not here)
+import jsonschema
 from flask import current_app
 
 
