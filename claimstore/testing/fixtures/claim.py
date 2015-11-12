@@ -114,5 +114,12 @@ def _remove_all_claims():
 @pytest.fixture
 def all_claims(db):
     """Fixture that loads all claims."""
+    # if there are more than 10 claims in the database, it is assumed that it
+    # is running in a production-like environment
+    claims = Claim.query.paginate(1, 10, False)
+    if claims.total > 10:
+        raise Exception('It seems that you are running tests in a '
+                        'production-like environment. Tests run only on '
+                        'databases with 10 or less claims stored.')
     _remove_all_claims()
     load_all_claims()
