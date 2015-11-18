@@ -20,13 +20,14 @@
 
 """Restful resources for the claims module."""
 
+import json
 from collections import defaultdict
 from functools import wraps
 from ipaddress import ip_address, ip_network
 
 import isodate  # noqa
-from flask import Blueprint, current_app, request
-from flask_restful import Api, Resource, abort, inputs, reqparse
+from flask import Blueprint, current_app, make_response, request
+from flask_restful import Api, Resource, abort, inputs
 from jsonschema import ValidationError
 from sqlalchemy import and_, or_
 
@@ -35,6 +36,7 @@ from claimstore.core.datetime import loc_date_utc
 from claimstore.core.exception import InvalidJSONData, InvalidRequest, \
     RestApiException
 from claimstore.core.json import validate_json
+from claimstore.core.pagination import RestfulSQLAlchemyPaginationMixIn
 from claimstore.models import Claim, Claimant, EquivalentIdentifier, \
     IdentifierType, Predicate
 
@@ -212,7 +214,7 @@ class ClaimantResource(ClaimStoreResource):
             raise InvalidRequest('This claimant is already registered')
 
 
-class ClaimResource(ClaimStoreResource):
+class ClaimResource(ClaimStoreResource, RestfulSQLAlchemyPaginationMixIn):
 
     """Resource that handles all claims-related requests."""
 
@@ -221,80 +223,79 @@ class ClaimResource(ClaimStoreResource):
     def __init__(self):
         """Initialise Claims Resource."""
         super(ClaimStoreResource, self).__init__()
-        self.get_claims_parser = reqparse.RequestParser()
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'claimant', dest='claimant',
             type=str, location='args',
             help='Unique short name of a registered claimant',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'predicate', dest='predicate',
             type=str, location='args',
             help='Unique name of a registered predicate',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'subject', dest='subject',
             type=str, location='args',
             help='Unique name of a registered identifier',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'object', dest='object',
             type=str, location='args',
             help='Unique name of a registered identifier',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'certainty', dest='certainty',
             type=float, location='args',
             help='Minimum certainty for a claim (float between 0 and 1.0)',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'human', dest='human',
             type=int, location='args',
             help='`1` if human claims. `0` if algorithm. No value shows all',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'actor', dest='actor',
             type=str, location='args',
             help='Name of the actor of the claim',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'role', dest='role',
             type=str, location='args',
             help='Role of the actor',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'since', dest='since',
             type=inputs.date, location='args',
             help='Date with the format YYYY-MM-DD',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'until', dest='until',
             type=inputs.date, location='args',
             help='Date with the format YYYY-MM-DD',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'type', dest='type',
             type=str, location='args',
             help='Identifier Type (e.g. DOI)',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'value', dest='value',
             type=str, location='args',
             help='Value of an Identifier Type',
             trim=True
         )
-        self.get_claims_parser.add_argument(
+        self.args_parser.add_argument(
             'recurse', dest='recurse',
             type=inputs.boolean, default=False, location='args',
             help='True if fetching all equivalent identifiers',
@@ -498,6 +499,8 @@ class ClaimResource(ClaimStoreResource):
                                    type as a subject type.
             :query string object: it fetches claims using the given identifier
                                   type as an object type.
+            :query int page: page from which to fetch data.
+            :query int per_page: amount of data per page.
 
             **Response**:
 
@@ -558,17 +561,15 @@ class ClaimResource(ClaimStoreResource):
 
             .. see docs/users.rst for usage documenation.
         """
-        args = self.get_claims_parser.parse_args()
-        if all(x is None for x in args.values()):  # Avoid false positives (0)
-            claims = Claim.query.all()
-        else:
-            claims = Claim.query
+        args = self.args_parser.parse_args()
+        claims = Claim.query
+        if not all(x is None for x in args.values()):  # Avoid false positives
 
             if args.type and args.value:
                 if args.recurse:
                     claims = Claim.equivalents(args.type, args.value)
-                    if not claims:
-                        return []
+                    # pagination is not done when using 'recurse'
+                    return self._make_output(claims)
                 else:
                     type_ = IdentifierType.query.filter_by(
                         name=args.type
@@ -640,7 +641,6 @@ class ClaimResource(ClaimStoreResource):
                 claims = claims.filter(Claim.role.like(args.role))
 
             if args.subject or args.object:
-                # Using subject/object makes type/value incompatible.
                 subject_type = db.aliased(IdentifierType, name='SubjectType')
                 object_type = db.aliased(IdentifierType, name='ObjectType')
                 if args.subject:
@@ -655,8 +655,17 @@ class ClaimResource(ClaimStoreResource):
                              Claim.object_type_id == object_type.id). \
                         filter(object_type.name == args.object)
 
+        output = self._make_output(self.paginate(claims,
+                                                 args.page,
+                                                 args.per_page))
+        resp = make_response(json.dumps(output))
+        self.set_link_header(resp)
+        return resp
+
+    def _make_output(self, items):
+        """Create output dictionary with all claims."""
         output = []
-        for c in claims:
+        for c in items:
             item = c.claim_details
             item['recieved'] = c.received.isoformat()
             item['uuid'] = c.uuid

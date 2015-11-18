@@ -164,6 +164,9 @@ def test_get_claims_by_type_value(webtest_app):
     # Filter by type and value
     resp = webtest_app.get('/claims?type=CDS_RECORD_ID&value=2003192')
     assert len(resp.json) == 2
+    # Filter by non-existant
+    resp = webtest_app.get('/claims?type=NO_TYPE&value=2003192')
+    assert len(resp.json) == 0
 
 
 @populate_all

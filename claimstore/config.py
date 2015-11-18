@@ -69,3 +69,5 @@ else:
 # -----------------------------------------------------------------------------
 
 CFG_EQUIVALENT_PREDICATES = ['is_same_as', 'is_variant_of']
+CFG_PAGINATION_ARG_PAGE = 1
+CFG_PAGINATION_ARG_PER_PAGE = 20

@@ -16,6 +16,7 @@ Submodules
    claimstore.core.datetime
    claimstore.core.exception
    claimstore.core.json
+   claimstore.core.pagination
 
 Module contents
 ---------------
