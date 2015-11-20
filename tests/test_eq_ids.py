@@ -71,7 +71,7 @@ def test_new_equivalence(webtest_app, dummy_claim, dummy_subject,
         assert 'No row was found for one' in str(excinfo)
 
     webtest_app.post_json(
-        '/claims',
+        '/api/claims',
         dummy_claim
     )
 
@@ -110,7 +110,7 @@ def test_new_subject(webtest_app, dummy_claim, dummy_subject, dummy_object):
 
     # Posting new claim
     webtest_app.post_json(
-        '/claims',
+        '/api/claims',
         dummy_claim
     )
 
@@ -153,7 +153,7 @@ def test_new_object(webtest_app, dummy_claim, dummy_subject, dummy_object):
 
     # Posting new claim
     webtest_app.post_json(
-        '/claims',
+        '/api/claims',
         dummy_claim
     )
 
@@ -190,7 +190,7 @@ def test_existing_subject_object(webtest_app, dummy_claim, dummy_subject,
     dummy_subject['value'] = sub_value
     dummy_object['value'] = ob_value
     webtest_app.post_json(
-        '/claims',
+        '/api/claims',
         dummy_claim
     )
     sub_eq = EquivalentIdentifier.query.filter_by(
@@ -215,7 +215,7 @@ def test_existing_subject_object(webtest_app, dummy_claim, dummy_subject,
     assert random_eq.eqid != sub_eq.eqid
 
     webtest_app.post_json(
-        '/claims',
+        '/api/claims',
         dummy_claim
     )
     # After the previous claim submission, all the eqids equivalent to the

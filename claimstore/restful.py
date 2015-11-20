@@ -127,7 +127,7 @@ class ClaimantResource(ClaimStoreResource):
     def post(self):
         """Register a new claimant in the ClaimStore.
 
-        .. http:post:: /subscribe
+        .. http:post:: /api/subscribe
 
             This resource is expecting JSON data with all the necessary
             information of a new claimant.
@@ -136,7 +136,7 @@ class ClaimantResource(ClaimStoreResource):
 
             .. sourcecode:: http
 
-                POST /subscribe HTTP/1.1
+                POST /api/subscribe HTTP/1.1
                 Content-Type: application/json
                 Host: localhost:5000
 
@@ -305,7 +305,7 @@ class ClaimResource(ClaimStoreResource, RestfulSQLAlchemyPaginationMixIn):
     def post(self):
         """Record a new claim.
 
-        .. http:post:: /claims
+        .. http:post:: /api/claims
 
             This resource is expecting JSON data with all the necessary
             information of a new claim.
@@ -314,7 +314,7 @@ class ClaimResource(ClaimStoreResource, RestfulSQLAlchemyPaginationMixIn):
 
             .. sourcecode:: http
 
-                POST /claims HTTP/1.1
+                POST /api/claims HTTP/1.1
                 Accept: application/json
                 Content-Length: 336
                 Content-Type: application/json
@@ -453,7 +453,7 @@ class ClaimResource(ClaimStoreResource, RestfulSQLAlchemyPaginationMixIn):
     def get(self):
         """GET service that returns the stored claims.
 
-        .. http:get:: /claims
+        .. http:get:: /api/claims
 
             Returns a JSON list with all the claims matching the query
             parameters.
@@ -462,7 +462,7 @@ class ClaimResource(ClaimStoreResource, RestfulSQLAlchemyPaginationMixIn):
 
                 .. sourcecode:: http
 
-                    GET /claims?type=INSPIRE_RECORD_ID&value=cond-mat/9906097&
+                    GET /api/claims?type=CDS_RECORD_ID&value=cond-mat/9906097&
                     recurse=1 HTTP/1.1
                     Accept: */*
                     Host: localhost:5000
@@ -680,7 +680,7 @@ class IdentifierResource(ClaimStoreResource):
     def get(self):
         """GET service that returns the stored identifiers.
 
-        .. http:get:: /identifiers
+        .. http:get:: /api/identifiers
 
             Returns a JSON list with all the available identifiers.
 
@@ -688,7 +688,7 @@ class IdentifierResource(ClaimStoreResource):
 
                 .. sourcecode:: http
 
-                    GET /identifiers HTTP/1.1
+                    GET /api/identifiers HTTP/1.1
                     Accept: */*
                     Host: localhost:5000
 
@@ -730,7 +730,7 @@ class PredicateResource(ClaimStoreResource):
     def get(self):
         """GET service that returns all the available predicates.
 
-        .. http:get:: /predicates
+        .. http:get:: /api/predicates
 
             Returns a JSON list with all the predicates.
 
@@ -738,7 +738,7 @@ class PredicateResource(ClaimStoreResource):
 
                 .. sourcecode:: http
 
-                    GET /predicates HTTP/1.1
+                    GET /api/predicates HTTP/1.1
                     Accept: */*
                     Host: localhost:5000
 
@@ -778,7 +778,7 @@ class EquivalentIdResource(ClaimStoreResource):
     def get(self, eqid=None):
         """GET service that returns all the stored Equivalent Identifiers.
 
-        .. http:get:: /eqids/(uuid:eqid)
+        .. http:get:: /api/eqids/(uuid:eqid)
 
             Returns all the type/value entries in the index grouped by their
             equivalent identifiers.
@@ -787,13 +787,13 @@ class EquivalentIdResource(ClaimStoreResource):
 
                 .. sourcecode:: http
 
-                    GET /eqids HTTP/1.1
+                    GET /api/eqids HTTP/1.1
                     Accept: */*
                     Host: localhost:5000
 
                 .. sourcecode:: http
 
-                    GET /eqids/0e64606e-68ce-482e-ad59-1e9981394f84 HTTP/1.1
+                    GET /api/eqids/0e64606e-68ce-482e-ad59-1e9981394f8 HTTP/1.1
                     Accept: */*
                     Host: localhost:5000
 
@@ -857,18 +857,18 @@ class EquivalentIdResource(ClaimStoreResource):
 
 
 claims_api.add_resource(ClaimantResource,
-                        '/subscribe',
+                        '/api/subscribe',
                         endpoint='subscribe')
 claims_api.add_resource(ClaimResource,
-                        '/claims',
+                        '/api/claims',
                         endpoint='claims')
 claims_api.add_resource(IdentifierResource,
-                        '/identifiers',
+                        '/api/identifiers',
                         endpoint='identifiers')
 claims_api.add_resource(PredicateResource,
-                        '/predicates',
+                        '/api/predicates',
                         endpoint='predicates')
 claims_api.add_resource(EquivalentIdResource,
-                        '/eqids',
-                        '/eqids/<uuid:eqid>',
+                        '/api/eqids',
+                        '/api/eqids/<uuid:eqid>',
                         endpoint='eqids')

@@ -56,7 +56,7 @@ def load_all_claims(test_app=None, config_path=None):
     for claim_fp in glob.glob("{}/*.json".format(claims_filepath)):
         with open(claim_fp) as f:
             resp = test_app.post_json(
-                '/claims',
+                '/api/claims',
                 json.load(f),
                 expect_errors=True
             )
