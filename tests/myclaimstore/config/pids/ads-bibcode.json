@@ -1,0 +1,7 @@
+{
+  "type": "ADS_BIBCODE",
+  "description": "ADS bibcode",
+  "url": "http://adsabs.harvard.edu/abs/<ADS_BIBCODE>",
+  "example_value": "2002ApJ...578...90F",
+  "example_url": "http://adsabs.harvard.edu/abs/2002ApJ...578...90F"
+}

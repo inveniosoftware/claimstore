@@ -1,0 +1,7 @@
+{
+  "type": "ORCID",
+  "description": "ORCID persistent digital identifier",
+  "url": "http://orcid.org/<ORCID>",
+  "example_value": "0000-0001-8248-603X",
+  "example_url": "http://orcid.org/0000-0001-8248-603X"
+}
