@@ -99,7 +99,7 @@ def dummy_claimant():
 def create_dummy_claimant(webtest_app, dummy_claimant):
     """Add dummy claimant to the database."""
     webtest_app.post_json(
-        '/api/subscribe',
+        '/api/claimants',
         dummy_claimant
     )
 

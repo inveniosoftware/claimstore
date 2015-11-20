@@ -127,7 +127,7 @@ class ClaimantResource(ClaimStoreResource):
     def post(self):
         """Register a new claimant in the ClaimStore.
 
-        .. http:post:: /api/subscribe
+        .. http:post:: /api/claimants
 
             This resource is expecting JSON data with all the necessary
             information of a new claimant.
@@ -136,7 +136,7 @@ class ClaimantResource(ClaimStoreResource):
 
             .. sourcecode:: http
 
-                POST /api/subscribe HTTP/1.1
+                POST /api/claimants HTTP/1.1
                 Content-Type: application/json
                 Host: localhost:5000
 
@@ -212,6 +212,75 @@ class ClaimantResource(ClaimStoreResource):
             return {'status': 'success', 'uuid': new_claimant.uuid}
         else:
             raise InvalidRequest('This claimant is already registered')
+
+    def get(self, claimant_id=None):
+        """GET service that returns all the available claimants.
+
+        .. http:get:: /api/claimants/(uuid:claimant_id)
+
+            Returns a JSON list with all the claimants.
+
+            **Request**:
+
+                .. sourcecode:: http
+
+                    GET /api/claimants HTTP/1.1
+                    Accept: */*
+                    Host: localhost:5000
+
+                .. sourcecode:: http
+
+                    GET /api/claimants/0e64606e-68ce-482e-ad59-1e99... HTTP/1.1
+                    Accept: */*
+                    Host: localhost:5000
+
+            :reqheader Content-Type: application/json
+
+            **Response**:
+
+                .. sourcecode:: http
+
+                    HTTP/1.0 200 OK
+                    Content-Length: 108
+                    Content-Type: application/json
+
+                    [
+                        {
+                            "name": "ADS",
+                            "url": "http://adsabs.harvard.edu/",
+                            "uuid": "00000000-be54-45c0-89fa-00000000"
+                        },
+                        {
+                            "name": "ARXIV",
+                            "url": "http://arxiv.org/",
+                            "uuid": "00000000-87a6-4095-99a9-00000000"
+                        },
+                        {
+                            "name": "CDS",
+                            "url": "http://cds.cern.ch",
+                            "uuid": "00000000-602e-4912-8a9b-00000000"
+                        },
+                        {
+                            "name": "INSPIRE",
+                            "url": "http://inspirehep.net",
+                            "uuid": "00000000-42a5-4d3f-b54a-00000000"
+                        }
+                    ]
+
+            :resheader Content-Type: application/json
+            :statuscode 200: no error
+            :statuscode 400: invalid request
+            :statuscode 403: access denied
+
+            .. see docs/users.rst for usage documenation
+        """
+        if claimant_id:
+            claimants = Claimant.query.filter_by(uuid=str(claimant_id))
+        else:
+            claimants = Claimant.query.all()
+        return [{'uuid': claimant.uuid,
+                 'name': claimant.name,
+                 'url': claimant.url} for claimant in claimants]
 
 
 class ClaimResource(ClaimStoreResource, RestfulSQLAlchemyPaginationMixIn):
@@ -450,10 +519,10 @@ class ClaimResource(ClaimStoreResource, RestfulSQLAlchemyPaginationMixIn):
         db.session.commit()
         return {'status': 'success', 'uuid': new_claim.uuid}
 
-    def get(self):
+    def get(self, claim_id=None):
         """GET service that returns the stored claims.
 
-        .. http:get:: /api/claims
+        .. http:get:: /api/claims/(uuid:claim_id)
 
             Returns a JSON list with all the claims matching the query
             parameters.
@@ -464,6 +533,12 @@ class ClaimResource(ClaimStoreResource, RestfulSQLAlchemyPaginationMixIn):
 
                     GET /api/claims?type=CDS_RECORD_ID&value=cond-mat/9906097&
                     recurse=1 HTTP/1.1
+                    Accept: */*
+                    Host: localhost:5000
+
+                .. sourcecode:: http
+
+                    GET /api/claims/0e64606e-68ce-482e-ad59-1e9981394f HTTP/1.1
                     Accept: */*
                     Host: localhost:5000
 
@@ -561,106 +636,114 @@ class ClaimResource(ClaimStoreResource, RestfulSQLAlchemyPaginationMixIn):
 
             .. see docs/users.rst for usage documenation.
         """
-        args = self.args_parser.parse_args()
-        claims = Claim.query
-        if not all(x is None for x in args.values()):  # Avoid false positives
+        if claim_id:
+            claim = Claim.query.filter_by(uuid=str(claim_id))
+            return self._make_output(claim)
+        else:
+            args = self.args_parser.parse_args()
+            claims = Claim.query
+            if not all(x is None for x in args.values()):
 
-            if args.type and args.value:
-                if args.recurse:
-                    claims = Claim.equivalents(args.type, args.value)
-                    # pagination is not done when using 'recurse'
-                    return self._make_output(claims)
-                else:
-                    type_ = IdentifierType.query.filter_by(
-                        name=args.type
-                    ).first()
-                    if type_:
-                        claims = claims. \
-                            filter(
-                                or_(
-                                    and_(
-                                        Claim.subject_type_id == type_.id,
-                                        Claim.subject_value.like(args.value)
-                                    ),
-                                    and_(
-                                        Claim.object_type_id == type_.id,
-                                        Claim.object_value.like(args.value)
+                if args.type and args.value:
+                    if args.recurse:
+                        claims = Claim.equivalents(args.type, args.value)
+                        # pagination is not done when using 'recurse'
+                        return self._make_output(claims)
+                    else:
+                        type_ = IdentifierType.query.filter_by(
+                            name=args.type
+                        ).first()
+                        if type_:
+                            claims = claims. \
+                                filter(
+                                    or_(
+                                        and_(
+                                            Claim.subject_type_id == type_.id,
+                                            Claim.subject_value.like(
+                                                args.value
+                                            )
+                                        ),
+                                        and_(
+                                            Claim.object_type_id == type_.id,
+                                            Claim.object_value.like(args.value)
+                                        )
                                     )
                                 )
-                            )
-                    else:
-                        return []
-            elif args.type:  # Only by type
-                    claims = claims. \
-                        join(
-                            IdentifierType,
-                            or_(
-                                Claim.subject_type_id == IdentifierType.id,
-                                Claim.object_type_id == IdentifierType.id
-                            )
-                        ).filter(IdentifierType.name == args.type)
+                        else:
+                            return []
+                elif args.type:  # Only by type
+                        claims = claims. \
+                            join(
+                                IdentifierType,
+                                or_(
+                                    Claim.subject_type_id == IdentifierType.id,
+                                    Claim.object_type_id == IdentifierType.id
+                                )
+                            ).filter(IdentifierType.name == args.type)
 
-            elif args.value:  # Only by value
-                claims = claims. \
-                    filter(
-                        or_(
-                            Claim.subject_value.like(args.value),
-                            Claim.object_value.like(args.value))
+                elif args.value:  # Only by value
+                    claims = claims. \
+                        filter(
+                            or_(
+                                Claim.subject_value.like(args.value),
+                                Claim.object_value.like(args.value))
+                        )
+
+                if args.since:
+                    claims = claims.filter(
+                        Claim.created >= loc_date_utc(args.since)
                     )
 
-            if args.since:
-                claims = claims.filter(
-                    Claim.created >= loc_date_utc(args.since)
-                )
+                if args.until:
+                    claims = claims.filter(
+                        Claim.created < loc_date_utc(args.until)
+                    )
 
-            if args.until:
-                claims = claims.filter(
-                    Claim.created < loc_date_utc(args.until)
-                )
-
-            if args.claimant:
-                claims = claims. \
-                    join(Claim.claimant). \
-                    filter(Claimant.name == args.claimant)
-
-            if args.predicate:
-                claims = claims. \
-                    join(Claim.predicate). \
-                    filter(Predicate.name == args.predicate)
-
-            if args.certainty is not None:
-                claims = claims.filter(Claim.certainty >= args.certainty)
-
-            if args.human is not None:
-                claims = claims.filter(Claim.human == args.human)
-
-            if args.actor:
-                claims = claims.filter(Claim.actor.like(args.actor))
-
-            if args.role:
-                claims = claims.filter(Claim.role.like(args.role))
-
-            if args.subject or args.object:
-                subject_type = db.aliased(IdentifierType, name='SubjectType')
-                object_type = db.aliased(IdentifierType, name='ObjectType')
-                if args.subject:
+                if args.claimant:
                     claims = claims. \
-                        join(subject_type,
-                             Claim.subject_type_id == subject_type.id). \
-                        filter(subject_type.name == args.subject)
+                        join(Claim.claimant). \
+                        filter(Claimant.name == args.claimant)
 
-                if args.object:
+                if args.predicate:
                     claims = claims. \
-                        join(object_type,
-                             Claim.object_type_id == object_type.id). \
-                        filter(object_type.name == args.object)
+                        join(Claim.predicate). \
+                        filter(Predicate.name == args.predicate)
 
-        output = self._make_output(self.paginate(claims,
-                                                 args.page,
-                                                 args.per_page))
-        resp = make_response(json.dumps(output))
-        self.set_link_header(resp)
-        return resp
+                if args.certainty is not None:
+                    claims = claims.filter(Claim.certainty >= args.certainty)
+
+                if args.human is not None:
+                    claims = claims.filter(Claim.human == args.human)
+
+                if args.actor:
+                    claims = claims.filter(Claim.actor.like(args.actor))
+
+                if args.role:
+                    claims = claims.filter(Claim.role.like(args.role))
+
+                if args.subject or args.object:
+                    subject_type = db.aliased(IdentifierType,
+                                              name='SubjectType')
+                    object_type = db.aliased(IdentifierType,
+                                             name='ObjectType')
+                    if args.subject:
+                        claims = claims. \
+                            join(subject_type,
+                                 Claim.subject_type_id == subject_type.id). \
+                            filter(subject_type.name == args.subject)
+
+                    if args.object:
+                        claims = claims. \
+                            join(object_type,
+                                 Claim.object_type_id == object_type.id). \
+                            filter(object_type.name == args.object)
+
+            output = self._make_output(self.paginate(claims,
+                                                     args.page,
+                                                     args.per_page))
+            resp = make_response(json.dumps(output))
+            self.set_link_header(resp)
+            return resp
 
     def _make_output(self, items):
         """Create output dictionary with all claims."""
@@ -857,10 +940,12 @@ class EquivalentIdResource(ClaimStoreResource):
 
 
 claims_api.add_resource(ClaimantResource,
-                        '/api/subscribe',
-                        endpoint='subscribe')
+                        '/api/claimants',
+                        '/api/claimants/<uuid:claimant_id>',
+                        endpoint='claimants')
 claims_api.add_resource(ClaimResource,
                         '/api/claims',
+                        '/api/claims/<uuid:claim_id>',
                         endpoint='claims')
 claims_api.add_resource(IdentifierResource,
                         '/api/identifiers',

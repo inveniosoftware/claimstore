@@ -52,7 +52,7 @@
       if(!errors.length) {
         $.ajax({
           type: 'POST',
-          url: '{{ url_for("claims_restful.subscribe") }}',
+          url: '{{ url_for("claims_restful.claimants") }}',
           data: JSON.stringify(editor.getValue()),
           contentType: "application/json; charset=utf-8",
           dataType: "json",

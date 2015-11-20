@@ -3,8 +3,8 @@ Restful Resources
 -----------------
 
 
-Subscribe to ClaimStore
-=======================
+Submit a claimant
+=================
 
 .. autosimple:: claimstore.restful.ClaimantResource.post
 
@@ -17,7 +17,7 @@ Subscribe to ClaimStore
         import json
         import requests
 
-        url = "http://localhost:5000/api/subscribe/
+        url = "http://localhost:5000/api/claimants/
         headers = {"Content-Type": "application/json"}
         with open(
             '$PROJECT_HOME/tests/config/claimants/cds.json'
@@ -29,16 +29,43 @@ Subscribe to ClaimStore
 
     .. sourcecode:: console
 
-        $ http POST http://localhost:5000/api/subscribe < tests/myclaimstore/config/claimants/cds.json
+        $ http POST http://localhost:5000/api/claimants < tests/myclaimstore/config/claimants/cds.json
 
 * From `curl <http://curl.haxx.se/>`_:
 
     .. sourcecode:: console
 
-        $ curl http://localhost:5000/api/subscribe \
+        $ curl http://localhost:5000/api/claimants \
                -H "Content-Type: application/json" \
                -d @tests/myclaimstore/config/claimants/inspire.json -X POST -v
 
+
+List claimants
+==============
+
+.. autosimple:: claimstore.restful.ClaimantResource.get
+
+**Usage**:
+
+* From `python <https://www.python.org/>`_:
+
+    .. sourcecode:: python
+
+        import requests
+        response = requests.get("http://localhost:5000/api/claimants")
+        print response.json()
+
+* From `httpie <https://github.com/jkbrzt/httpie>`_:
+
+    .. sourcecode:: console
+
+        $ http GET http://localhost:5000/api/claimants
+
+* From `curl <http://curl.haxx.se/>`_:
+
+    .. sourcecode:: console
+
+        $ curl http://localhost:5000/api/claimants
 
 
 Submit a claim

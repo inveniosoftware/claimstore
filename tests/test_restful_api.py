@@ -34,20 +34,32 @@ pytest_plugins = (
 
 @pytest.mark.usefixtures('all_predicates')
 def test_put_claimant(webtest_app, dummy_claimant):
-    """Testing `subscribe` api."""
+    """Testing `claimants` api."""
     resp = webtest_app.post_json(
-        '/api/subscribe',
+        '/api/claimants',
         dummy_claimant
     )
     assert resp.status_code == 200
 
     # Re-adding the same claimant should fail.
     resp = webtest_app.post_json(
-        '/api/subscribe',
+        '/api/claimants',
         dummy_claimant,
         expect_errors=True
     )
     assert resp.status_code == 400
+
+
+@populate_all
+def test_get_claimants(webtest_app):
+    """Testing GET claimants api."""
+    resp = webtest_app.get('/api/claimants')
+    assert resp.status_code == 200
+    assert len(resp.json) >= 2
+    claimant_uuid = list(resp.json)[0]['uuid']
+    resp = webtest_app.get('/api/claimants/{}'.format(claimant_uuid))
+    assert resp.status_code == 200
+    assert len(resp.json) == 1
 
 
 @pytest.mark.usefixtures('all_predicates')
@@ -63,7 +75,7 @@ def test_put_claim(webtest_app, dummy_claimant, dummy_claim):
 
     # Test when there is a claimant.
     webtest_app.post_json(
-        '/api/subscribe',
+        '/api/claimants',
         dummy_claimant
     )
     resp = webtest_app.post_json(
@@ -78,6 +90,10 @@ def test_get_claims(webtest_app):
     """Testing GET claims api."""
     resp = webtest_app.get('/api/claims')
     assert resp.status_code == 200
+    claim_uuid = list(resp.json)[0]['uuid']
+    resp = webtest_app.get('/api/claims/{}'.format(claim_uuid))
+    assert resp.status_code == 200
+    assert len(resp.json) == 1
 
 
 @populate_all
